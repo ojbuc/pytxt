@@ -1,11 +1,11 @@
+import os
 from data import (
-        AREAS, 
-        ITEM_DEFINITIONS, 
-        WRONG_ITEM_RESPONSES, 
+        AREAS,
+        ITEM_DEFINITIONS,
+        WRONG_ITEM_RESPONSES,
         GENERIC_WRONG_ITEM_RESPONSE
 )
 from enums import Area, Item, Object, Status, Command, Color
-import os
 
 ACTION_LOG = []
 LOG_MAX = 8
@@ -47,15 +47,13 @@ def handle_quit_command():
         quit_confirm = (
                 input("▶ Would you like to quit? (y/n): ").strip().lower()
         )
-
-        if quit_confirm in ('y', 'yes'): 
+        if quit_confirm in ('y', 'yes'):
             print("▶ Ending the adventure...\n")
             return True
-        elif quit_confirm in ('n', 'no'):
+        if quit_confirm in ('n', 'no'):
             log("▶ The adventure continues!\n")
             return False
-        else:
-            print("▶ Invalid input, please enter y/n.")
+        print("▶ Invalid input, please enter y/n.")
 
 
 def show_help():
@@ -391,14 +389,12 @@ def handle_examine_command(obj_name, current_position, inventory):
             else:
                 log(obj[Object.DESCRIPTION])
             return
-        else:
-            show_object_not_found()
-            return
+        show_object_not_found()
+        return
     # Check area items
     if obj_name in AREAS[current_position][Area.ITEMS]:
         log(AREAS[current_position][Area.ITEMS][obj_name])
         return
-
     show_object_not_found()
 
 
@@ -407,15 +403,13 @@ def resolve_name(partial, candidates):
     # Exact match first
     if partial in candidates:
         return partial, None
-
     # Substring matches
     matches = [c for c in candidates if partial in c]
 
     if len(matches) == 1:
         return matches[0], None
-    elif len(matches) > 1:
+    if len(matches) > 1:
         return None, f"▶ Did you mean: {', '.join(matches)}?"
-
     # No match found
     return None, None
 
@@ -509,7 +503,7 @@ def process_command(command, current_position, inventory):
     if command.startswith(Command.EXAMINE) or command.startswith(Command.EX):
         # Remove "examine " or "ex "
         partial = (
-                command[8:] if command.startswith(Command.EXAMINE) 
+                command[8:] if command.startswith(Command.EXAMINE)
                 else command[3:]
         )
         candidates = visible_interactables + area_items + inventory
@@ -661,7 +655,7 @@ def update_dynamic_visibility(current_position, inventory):
     if current_position == Area.LIVING_ROOM and Item.SHED_KEY in inventory:
         # Make ashes invisible when player has shed key
         if (
-            all(k in AREAS[current_position][Object.INTERACTABLES] for 
+            all(k in AREAS[current_position][Object.INTERACTABLES] for
                 k in (Object.ASHES, Object.BUTTON, Object.FIREPLACE))
         ):
             AREAS[current_position][Object.INTERACTABLES][
@@ -682,7 +676,7 @@ def update_dynamic_visibility(current_position, inventory):
                   Area.DESCRIPTION
             ] = "A ground of fertile green and earthy browns."
 
-    # Show magic plant in garden if safe has been revealed 
+    # Show magic plant in garden if safe has been revealed
     # and player has untitled #47
     if (
         current_position == Area.GARDEN

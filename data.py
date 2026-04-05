@@ -50,16 +50,16 @@ ITEM_DEFINITIONS = {
 # or a dict mapping specific item names to responses.
 # Falls back to GENERIC_WRONG_ITEM_RESPONSE if not defined here.
 WRONG_ITEM_RESPONSES = {
-    # Example of a flat response (same message regardless of item used):
-    # "garden hose": "▶ That doesn't seem to work with the hose.",
-    #
-    # Example of per-item responses:
-    # "ashes": {
-    #     "shovel": "▶ Digging through hot ashes seems unwise.",
-    #     "bone":   "▶ The ashes don't want your bone.",
-    # },
+# Example of a flat response (same message regardless of item used):
+# "garden hose": "▶ That doesn't seem to work with the hose.",
+#
+# Example of per-item responses:
+# "ashes": {
+#     "shovel": "▶ Digging through hot ashes seems unwise.",
+#     "bone":   "▶ The ashes don't want your bone.",
+# },
 }
- 
+
 GENERIC_WRONG_ITEM_RESPONSE = (
     "▶ That doesn't seem to do anything useful here."
 )

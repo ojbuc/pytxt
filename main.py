@@ -4,6 +4,7 @@ from data import (
         WRONG_ITEM_RESPONSES, 
         GENERIC_WRONG_ITEM_RESPONSE
 )
+from enums import Area, Item, Object, Status, Command, Color
 import os
 
 ACTION_LOG = []
@@ -98,10 +99,15 @@ def get_item_description(item_name):
 
 
 def handle_take_command(item_name, current_position, inventory):
-    if item_name in AREAS[current_position]["items"]:
-        inventory.append(item_name)
-        log(f"▶ You take the {item_name}.")
-        del AREAS[current_position]["items"][item_name]
+    area_items = AREAS[current_position][Area.ITEMS]
+    # Find the matching key (may be an Item enum)
+    key_match = next((k for k in area_items if k == item_name), None)
+    if key_match is not None:
+        inventory.append(key_match)
+        log(f"▶ You take the "
+            f"{key_match.value if hasattr(key_match, 'value') else key_match}."
+        )
+        del area_items[key_match]
     else:
         log("▶ You can't take that.")
 
@@ -112,14 +118,15 @@ def show_object_not_found():
 
 def is_visible(area, interactable_name):
     """ Check if an interactable object is visible to the player. """
-    interactable = AREAS[area]["interactables"].get(interactable_name)
-    return interactable and interactable.get("visible", True)
+    interactable = AREAS[area][Object.INTERACTABLES].get(interactable_name)
+    return interactable and interactable.get(Object.VISIBLE, True)
 
 
 def reveal_interactable(area, interactable_name):
     """ Make a hidden interactable object visible in the specified area. """
-    if interactable_name in AREAS[area]["interactables"]:
-        AREAS[area]["interactables"][interactable_name]["visible"] = True
+    if interactable_name in AREAS[area][Object.INTERACTABLES]:
+        AREAS[area][Object.INTERACTABLES][interactable_name][
+                Object.VISIBLE] = True
 
 
 def apply_interaction_effects(obj, obj_name, inventory, success):
@@ -131,57 +138,64 @@ def apply_interaction_effects(obj, obj_name, inventory, success):
         return ""
 
     # Give primary item
-    if "gives_item" in obj and not obj.get("used", False):
-        inventory.append(obj["gives_item"])
-        result_parts.append(f"\n▶ (You now have: {obj['gives_item']})")
+    if Object.GIVES_ITEM in obj and not obj.get(Object.USED, False):
+        inventory.append(obj[Object.GIVES_ITEM])
+        result_parts.append(
+                f"\n▶ (You now have: {obj[Object.GIVES_ITEM].value})"
+        )
 
     # Give secondary item
-    if "also_gives" in obj and not obj.get("used", False):
-        inventory.append(obj["also_gives"])
-        result_parts.append(f"\n▶ (You also found: {obj['also_gives']})")
+    if Object.ALSO_GIVES in obj and not obj.get(Object.USED, False):
+        inventory.append(obj[Object.ALSO_GIVES])
+        result_parts.append(
+                f"\n▶ (You also found: {obj[Object.ALSO_GIVES].value})"
+        )
 
     # Handle painting becoming an item
-    if "becomes_item" in obj and not obj.get("used", False):
-        inventory.append(obj["becomes_item"])
-        result_parts.append(f"\n▶ (You now have: {obj['becomes_item']})")
-        if obj_name == "loose painting":
+    if Object.BECOMES_ITEM in obj and not obj.get(Object.USED, False):
+        inventory.append(obj[Object.BECOMES_ITEM])
+        result_parts.append(
+                f"\n▶ (You now have: {obj[Object.BECOMES_ITEM].value})"
+        )
+        if obj_name == Object.LOOSE_PAINTING:
             SAFE_REVEALED = True
             # Remove painting from interactables
             for area in AREAS.values():
-                if obj_name in area.get("interactables", {}):
-                    del area["interactables"][obj_name]
+                if obj_name in area.get(Object.INTERACTABLES, {}):
+                    del area[Object.INTERACTABLES][obj_name]
                     break
 
     # Remove bone from inventory
-    if obj_name == "carl" and "requires_item" in obj:
-        required_item = obj["requires_item"]
+    if obj_name == Object.CARL and Object.REQUIRES_ITEM in obj:
+        required_item = obj[Object.REQUIRES_ITEM]
         if required_item in inventory:
             inventory.remove(required_item)
-            result_parts.append(f"\n▶ (You gave Carl the {required_item})")
+            result_parts.append(f"\n▶ (You gave Carl the "
+                                f"{required_item.value})")
 
     # Remove dog statue from inventory
-    if obj_name == "pedestal" and "requires_item" in obj:
-        required_item = obj["requires_item"]
+    if obj_name == Object.PEDESTAL and Object.REQUIRES_ITEM in obj:
+        required_item = obj[Object.REQUIRES_ITEM]
         if required_item in inventory:
             inventory.remove(required_item)
-            result_parts.append(
-                    f"\n▶ (You placed the {required_item} on the pedestal)")
+            result_parts.append(f"\n▶ (You placed the {required_item.value} "
+                                 "on the pedestal)")
 
     # Change item states
-    if "changes_item_state" in obj:
-        for item, new_state in obj["changes_item_state"].items():
+    if Object.CHANGES_ITEM_STATE in obj:
+        for item, new_state in obj[Object.CHANGES_ITEM_STATE].items():
             if item in inventory:
                 ITEM_STATES[item] = new_state
 
     # Mark as used if it gives items, becomes item, or is Carl
     if (
-        "gives_item" in obj
-        or "also_gives" in obj
-        or "becomes_item" in obj
-        or obj_name == "carl"
-        or "enables_exit" in obj
+        Object.GIVES_ITEM in obj
+        or Object.ALSO_GIVES in obj
+        or Object.BECOMES_ITEM in obj
+        or obj_name == Object.CARL
+        or Object.ENABLES_EXIT in obj
     ):
-        obj["used"] = True
+        obj[Object.USED] = True
 
     return "".join(result_parts)
 
@@ -201,7 +215,7 @@ def get_wrong_item_response(obj_name, used_item):
 
 def handle_item_requirements(obj, inventory, obj_name=None, used_item=None):
     """ Handle object interaction requirements and return result message. """
-    required_item = obj["requires_item"]
+    required_item = obj[Object.REQUIRES_ITEM]
 
     # If the player specified an item, test that item specifically
     if used_item is not None:
@@ -212,22 +226,23 @@ def handle_item_requirements(obj, inventory, obj_name=None, used_item=None):
     else:
         # Legacy auto-check: look for the required item in inventory
         if required_item not in inventory:
-            return obj["interaction_result"], False
+            return obj[Object.INTERACTION_RESULT], False
         item_to_check = required_item
 
     # Check if item needs to be in specific state
-    if "requires_item_state" in obj:
-        required_state = obj["requires_item_state"]
+    if Object.REQUIRES_ITEM_STATE in obj:
+        required_state = obj[Object.REQUIRES_ITEM_STATE]
         current_state = ITEM_STATES.get(item_to_check, "default")
 
         if current_state != required_state:
             return (
-                obj.get("failed_state_result", obj["interaction_result"]),
+                obj.get(Object.FAILED_STATE_RESULT,
+                obj[Object.INTERACTION_RESULT]),
                 False,
             )
 
     # Item requirements met
-    return obj.get("success_result", obj["interaction_result"]), True
+    return obj.get(Object.SUCCESS_RESULT, obj[Object.INTERACTION_RESULT]), True
 
 
 def get_used_message(obj_name):
@@ -254,14 +269,14 @@ def get_used_message(obj_name):
 
 def interact_with_object(area_name, obj_name, inventory, used_item=None):
     """ Handle interaction with objects. """
-    obj = AREAS[area_name]["interactables"][obj_name]
+    obj = AREAS[area_name][Object.INTERACTABLES][obj_name]
 
     # Check if object has already been used
-    if obj.get("used", False):
+    if obj.get(Object.USED, False):
         return get_used_message(obj_name)
 
     # Handle objects with item requirements
-    if "requires_item" in obj:
+    if Object.REQUIRES_ITEM in obj:
         result, success = handle_item_requirements(
                 obj, inventory, obj_name=obj_name, used_item=used_item
         )
@@ -273,7 +288,7 @@ def interact_with_object(area_name, obj_name, inventory, used_item=None):
         return get_wrong_item_response(obj_name, used_item)
 
     # No item requirement - normal interaction
-    result = obj["interaction_result"]
+    result = obj[Object.INTERACTION_RESULT]
     effects = apply_interaction_effects(obj, obj_name, inventory, True)
     return result + effects
 
@@ -288,8 +303,8 @@ def prompt_item_selection(inventory):
 
     print("▶ Use what?")
     for i, item in enumerate(inventory, 1):
-        print(f"  {i}, {item}")
-    print("  0, cancel")
+        print(f"  {i}: {item.value if hasattr(item, 'value') else item}")
+    print("  0: cancel")
 
     while True:
         choice = input("▶ ").strip().lower()
@@ -311,7 +326,7 @@ def prompt_item_selection(inventory):
 
 
 def handle_use_command(obj_name, current_position, inventory, used_item=None):
-    if obj_name not in AREAS[current_position]["interactables"]:
+    if obj_name not in AREAS[current_position][Object.INTERACTABLES]:
         log("▶ You can't interact with that.")
         return
 
@@ -319,17 +334,19 @@ def handle_use_command(obj_name, current_position, inventory, used_item=None):
         show_object_not_found()
         return
 
-    obj = AREAS[current_position]["interactables"][obj_name]
+    obj = AREAS[current_position][Object.INTERACTABLES][obj_name]
 
     # If the object accepts items and none was specified, prompt the player
-    if used_item is None and inventory and obj.get("can_interact", False):
+    if used_item is None and inventory and obj.get(Object.REQUIRES_ITEM):
         used_item = prompt_item_selection(inventory)
         if used_item is None:
             log("▶ Never mind.")
             return
 
     # Capture reveals before interact_with_object marks obj as used
-    reveals_target = obj.get("reveals") if not obj.get("used", False) else None
+    reveals_target = (
+            obj.get(Object.REVEALS) if not obj.get(Object.USED, False) else None
+    )
 
     result = interact_with_object(
             current_position, obj_name, inventory, used_item=used_item
@@ -340,10 +357,10 @@ def handle_use_command(obj_name, current_position, inventory, used_item=None):
         reveal_interactable(current_position, reveals_target)
 
     # Handle reveals
-    obj = AREAS[current_position]["interactables"].get(obj_name)
-    if obj and "reveals" in obj and not obj.get("used", False):
-        reveal_interactable(current_position, obj["reveals"])
-        obj["used"] = True
+    obj = AREAS[current_position][Object.INTERACTABLES].get(obj_name)
+    if obj and Object.REVEALS in obj and not obj.get(Object.USED, False):
+        reveal_interactable(current_position, obj[Object.REVEALS])
+        obj[Object.USED] = True
 
 
 def handle_examine_command(obj_name, current_position, inventory):
@@ -354,32 +371,32 @@ def handle_examine_command(obj_name, current_position, inventory):
         return
 
     # Check area interactables
-    if obj_name in AREAS[current_position]["interactables"]:
+    if obj_name in AREAS[current_position][Object.INTERACTABLES]:
         if is_visible(current_position, obj_name):
-            obj = AREAS[current_position]["interactables"][obj_name]
-            if obj_name == "fireplace":
-                interactables = AREAS[current_position]["interactables"]
-                button = interactables.get("button", {})
-                ashes = interactables.get("ashes", {})
-                if ashes.get("used"):
-                    log(obj["post_ashes_description"])
-                elif button.get("used"):
-                    log(obj["post_button_description"])
-                elif obj.get("used") and "used_description" in obj:
-                    log(obj["used_description"])
+            obj = AREAS[current_position][Object.INTERACTABLES][obj_name]
+            if obj_name == Object.FIREPLACE:
+                interactables = AREAS[current_position][Object.INTERACTABLES]
+                button = interactables.get(Object.BUTTON, {})
+                ashes = interactables.get(Object.ASHES, {})
+                if ashes.get(Object.USED):
+                    log(obj[Object.POST_ASHES_DESCRIPTION])
+                elif button.get(Object.USED):
+                    log(obj[Object.POST_BUTTON_DESCRIPTION])
+                elif obj.get(Object.USED) and Object.USED_DESCRIPTION in obj:
+                    log(obj[Object.USED_DESCRIPTION])
                 else:
-                    log(obj["description"])
-            elif obj.get("used") and "used_description" in obj:
-                log(obj["used_description"])
+                    log(obj[Object.DESCRIPTION])
+            elif obj.get(Object.USED) and Object.USED_DESCRIPTION in obj:
+                log(obj[Object.USED_DESCRIPTION])
             else:
-                log(obj["description"])
+                log(obj[Object.DESCRIPTION])
             return
         else:
             show_object_not_found()
             return
     # Check area items
-    if obj_name in AREAS[current_position]["items"]:
-        log(AREAS[current_position]["items"][obj_name])
+    if obj_name in AREAS[current_position][Area.ITEMS]:
+        log(AREAS[current_position][Area.ITEMS][obj_name])
         return
 
     show_object_not_found()
@@ -406,28 +423,28 @@ def resolve_name(partial, candidates):
 def can_use_exit(current_position, direction, inventory):
     """ Check if player can use this exit. """
     area = AREAS[current_position]
-    if "exit_requirements" not in area:
+    if Area.EXIT_REQUIREMENTS not in area:
         return True, None
 
-    required = area["exit_requirements"].get(direction)
+    required = area[Area.EXIT_REQUIREMENTS].get(direction)
     if not required:
         return True, None
 
     # Handle item requirements
-    if "item" in required and required["item"] not in inventory:
-        return False, required["message"]
+    if Area.ITEM in required and required[Area.ITEM] not in inventory:
+        return False, required[Area.MESSAGE]
 
     # Handle condition requirements (like watered plant)
-    if "condition" in required:
-        if required["condition"] == "watered_plant":
-            plant_obj = area["interactables"].get("magic plant")
-            if not plant_obj or not plant_obj.get("used", False):
-                return False, required["message"]
+    if Object.CONDITION in required:
+        if required[Object.CONDITION] == Object.WATERED_PLANT:
+            plant_obj = area[Object.INTERACTABLES].get(Object.MAGIC_PLANT)
+            if not plant_obj or not plant_obj.get(Object.USED, False):
+                return False, required[Area.MESSAGE]
 
-        if required["condition"] == "statue_placed":
-            pedestal_obj = area["interactables"].get("pedestal")
-            if not pedestal_obj or not pedestal_obj.get("used", False):
-                return False, required["message"]
+        if required[Object.CONDITION] == Object.STATUE_PLACED:
+            pedestal_obj = area[Object.INTERACTABLES].get(Object.PEDESTAL)
+            if not pedestal_obj or not pedestal_obj.get(Object.USED, False):
+                return False, required[Area.MESSAGE]
 
     return True, None
 
@@ -435,8 +452,8 @@ def can_use_exit(current_position, direction, inventory):
 def handle_movement(direction, current_position, inventory):
     can_go, message = can_use_exit(current_position, direction, inventory)
     if can_go:
-        next_area = AREAS[current_position]["exits"][direction]
-        log(f"▶ You go {direction}: {next_area.replace('_', ' ')}")
+        next_area = AREAS[current_position][Area.EXITS][direction]
+        log(f"▶ You go {direction}: {next_area.value.replace('_', ' ')}")
         return next_area
 
     log(message)
@@ -448,7 +465,7 @@ def parse_movement_command(command, current_position):
     parts = command.split()
     if not parts:
         return None
-    exits = AREAS[current_position]["exits"]
+    exits = AREAS[current_position][Area.EXITS]
 
     # Resolve alias first
     first = DIRECTION_ALIASES.get(parts[0], parts[0])
@@ -483,15 +500,18 @@ def process_command(command, current_position, inventory):
 
     # Build candidate lists
     visible_interactables = [
-        name for name in AREAS[current_position]["interactables"]
+        name for name in AREAS[current_position][Object.INTERACTABLES]
         if is_visible(current_position, name)
     ]
-    area_items = list(AREAS[current_position]["items"].keys())
+    area_items = list(AREAS[current_position][Area.ITEMS].keys())
 
     # Handle other commands
-    if command.startswith("examine ") or command.startswith("ex "):
+    if command.startswith(Command.EXAMINE) or command.startswith(Command.EX):
         # Remove "examine " or "ex "
-        partial = command[8:] if command.startswith("examine ") else command[3:]
+        partial = (
+                command[8:] if command.startswith(Command.EXAMINE) 
+                else command[3:]
+        )
         candidates = visible_interactables + area_items + inventory
         obj_name, hint = resolve_name(partial, candidates)
         if hint:
@@ -501,7 +521,7 @@ def process_command(command, current_position, inventory):
         else:
             show_object_not_found()
 
-    elif command.startswith("use "):
+    elif command.startswith(Command.USE):
         remainder = command[4:]  # Remove "use "
         used_item = None
 
@@ -531,7 +551,7 @@ def process_command(command, current_position, inventory):
         else:
             log("▶ You can't interact with that.")
 
-    elif command.startswith("take "):
+    elif command.startswith(Command.TAKE):
         partial = command[5:]  # Remove "take "
         candidates = area_items
         obj_name, hint = resolve_name(partial, candidates)
@@ -542,16 +562,16 @@ def process_command(command, current_position, inventory):
         else:
             log("▶ You can't take that.")
 
-    elif command in ("inventory", "inv"):
+    elif command in (Command.INVENTORY, Command.INV):
         handle_inventory_command(inventory)
-        return "CONTINUE"
-    elif command == "help":
+        return Status.CONTINUE
+    elif command == Command.HELP:
         show_help()
-        return "CONTINUE"
-    elif command == "quit" or command == "exit":
+        return Status.CONTINUE
+    elif command == Command.QUIT or command == Command.EXIT:
         if handle_quit_command():
-            return "QUIT"
-        return "CONTINUE"
+            return Status.QUIT
+        return Status.CONTINUE
     else:
         log("▶ Invalid command, type 'help' for a list of commands.")
 
@@ -559,12 +579,12 @@ def process_command(command, current_position, inventory):
 
 
 def display_interactables(current_position):
-    if "interactables" not in AREAS[current_position]:
+    if Object.INTERACTABLES not in AREAS[current_position]:
         return
 
     visible_interactables = [
         name
-        for name in AREAS[current_position]["interactables"]
+        for name in AREAS[current_position][Object.INTERACTABLES]
         if is_visible(current_position, name)
     ]
 
@@ -577,16 +597,17 @@ def display_interactables(current_position):
     both = []
 
     for name in visible_interactables:
-        obj = AREAS[current_position]["interactables"][name]
+        obj = AREAS[current_position][Object.INTERACTABLES][name]
         can_examine = True  # All objects can be examined
-        can_use = obj.get("can_interact", False)
+        can_use = obj.get(Object.CAN_INTERACT, False)
+        obj_name = name.value if hasattr(name, 'value') else name
 
         if can_examine and can_use:
-            both.append(name)
+            both.append(obj_name)
         elif can_examine:
-            examine_only.append(name)
+            examine_only.append(obj_name)
         elif can_use:
-            use_only.append(name)
+            use_only.append(obj_name)
 
     if both:
         print(f"  You can examine and use: {', '.join(both)}")
@@ -599,37 +620,37 @@ def display_interactables(current_position):
 def display_area_information(current_position):
     clear_screen()
 
-    BOLD = "\033[31m"
-    RESET = "\033[0m"
-
     # Show action log
     if ACTION_LOG:
         print("=" * 40)
         for i, line in enumerate(ACTION_LOG):
             if i >= len(ACTION_LOG) - NEW_LOG_LINES:
-                print(f"{BOLD}{line}{RESET}")
+                print(f"{Color.YELLOW.value}{line}{Color.RESET.value}")
             else:
                 print(line)
     print("=" * 40)
 
     print("Current area:")
-    print("  " + AREAS[current_position]["description"])
+    print("  " + AREAS[current_position][Area.DESCRIPTION])
 
     # Show exits
-    exits = AREAS[current_position]["exits"]
-    exit_reqs = AREAS[current_position].get("exit_requirements", {})
+    exits = AREAS[current_position][Area.EXITS]
+    exit_reqs = AREAS[current_position].get(Area.EXIT_REQUIREMENTS, {})
     if exits:
         print("  Exits:")
         for direction, destination in exits.items():
             requirement = exit_reqs.get(direction, {})
-            if "condition" in requirement:
+            if Object.CONDITION in requirement:
                 can_go, _ = can_use_exit(current_position, direction, [])
                 if not can_go:
                     continue
-            print(f"    ➜ {direction} - {destination.replace('_', ' ')}")
+            print(
+                f"    ➜ {direction.value} - "
+                f"{destination.value.replace('_', ' ')}"
+            )
     # Show items
-    if AREAS[current_position]["items"]:
-        items = list(AREAS[current_position]["items"].keys())
+    if AREAS[current_position][Area.ITEMS]:
+        items = list(AREAS[current_position][Area.ITEMS].keys())
         print(f"  Items here: {', '.join(items)}")
     # Show interactables
     display_interactables(current_position)
@@ -637,43 +658,45 @@ def display_area_information(current_position):
 
 def update_dynamic_visibility(current_position, inventory):
     """ Update visibility of objects that depend on inventory items. """
-    if current_position == "living area" and "shed key" in inventory:
+    if current_position == Area.LIVING_ROOM and Item.SHED_KEY in inventory:
         # Make ashes invisible when player has shed key
         if (
-            all(k in AREAS[current_position]["interactables"] for 
-                k in ("ashes", "button", "fireplace"))
+            all(k in AREAS[current_position][Object.INTERACTABLES] for 
+                k in (Object.ASHES, Object.BUTTON, Object.FIREPLACE))
         ):
-            AREAS[current_position]["interactables"]["ashes"]["visible"] = False
+            AREAS[current_position][Object.INTERACTABLES][
+                  Object.ASHES][Object.VISIBLE] = False
 
-    if current_position == "yard" and "shovel" in inventory:
+    if current_position == Area.YARD and Item.SHOVEL in inventory:
         # Make x mark visible when player has shovel
-        if "x mark" in AREAS[current_position]["interactables"]:
-            AREAS[current_position]["interactables"]["x mark"]["visible"] = True
+        if Object.X_MARK in AREAS[current_position][Object.INTERACTABLES]:
+            AREAS[current_position][Object.INTERACTABLES][Object.X_MARK][
+                  Object.VISIBLE] = True
 
-    if current_position == "yard" and "dog statue" in inventory:
+    if current_position == Area.YARD and Item.DOG_STATUE in inventory:
         # Make carl disappear when player has dog statue
-        if "carl" in AREAS[current_position]["interactables"]:
-            AREAS[current_position]["interactables"]["carl"]["visible"] = False
+        if Object.CARL in AREAS[current_position][Object.INTERACTABLES]:
+            AREAS[current_position][Object.INTERACTABLES][
+                  Object.CARL][Object.VISIBLE] = False
             AREAS[current_position][
-                "description"
+                  Area.DESCRIPTION
             ] = "A ground of fertile green and earthy browns."
 
     # Show magic plant in garden if safe has been revealed 
-    # and player has painting
+    # and player has untitled #47
     if (
-        current_position == "garden"
+        current_position == Area.GARDEN
         and SAFE_REVEALED
-        and "untitled #47" in inventory
+        and Item.UNTITLED_47 in inventory
     ):
-        if "magic plant" in AREAS[current_position]["interactables"]:
-            AREAS[current_position]["interactables"]["magic plant"][
-                "visible"
-            ] = True
+        if Object.MAGIC_PLANT in AREAS[current_position][Object.INTERACTABLES]:
+            AREAS[current_position][Object.INTERACTABLES][
+                  Object.MAGIC_PLANT][Object.VISIBLE] = True
 
 
 def main():
     try:
-        current_position = "living room"
+        current_position = Area.LIVING_ROOM
         inventory = []
 
         while True:
@@ -689,10 +712,10 @@ def main():
                 continue
             new_position = process_command(command, current_position, inventory)
 
-            if new_position == "QUIT":
+            if new_position == Status.QUIT:
                 break
 
-            if new_position == "CONTINUE":
+            if new_position == Status.CONTINUE:
                 continue
 
             current_position = new_position

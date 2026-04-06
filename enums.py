@@ -86,6 +86,14 @@ class Command(str, Enum):
     TAKE =                      "take "
     USE =                       "use "
 
+class Used(str, Enum):
+    BUTTON =                    "button"
+    CARL =                      "carl"
+    DRAWER =                    "drawer"
+    PAINTING =                  "painting"
+    PLANT =                     "plant"
+    X_MARK =                    "x mark"
+
 class Color(str, Enum):
     BLACK =                     "\033[30m"
     BLUE =                      "\033[34m"

@@ -1,6 +1,6 @@
 from enums import Area, Item, Object, Path
 
-ITEM_DEFINITIONS = {
+ITEM_DESCRIPTIONS = {
     Item.GARDEN_KEY: (
         "▶ A small brass key with intricate engravings. "
         "\n▶ It looks like it might unlock a garden door."

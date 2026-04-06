@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Area(str, Enum):
     ATTIC =                     "attic"
     CHAOS_DIMENSION =           "chaos dimension"
@@ -16,6 +17,7 @@ class Area(str, Enum):
     SHED =                      "shed"
     YARD =                      "yard"
 
+
 class Item(str, Enum):
     ATTIC_KEY =                 "attic key"
     BONE =                      "bone"
@@ -26,6 +28,7 @@ class Item(str, Enum):
     SHED_KEY =                  "shed key"
     UNTITLED_47 =               "untitled #47"
     WATERING_CAN =              "watering can"
+
 
 class Object(str, Enum):
     ALSO_GIVES =                "also_gives"
@@ -62,6 +65,7 @@ class Object(str, Enum):
     WATERED_PLANT =             "watered_plant"
     X_MARK =                    "x mark"
 
+
 class Path(str, Enum):
     DOWN =                      "down"
     EAST =                      "east"
@@ -71,9 +75,11 @@ class Path(str, Enum):
     UP =                        "up"
     WEST =                      "west"
 
+
 class Status(str, Enum):
     CONTINUE =                  "CONTINUE"
     QUIT =                      "QUIT"
+
 
 class Command(str, Enum):
     EX =                        "ex "
@@ -86,6 +92,7 @@ class Command(str, Enum):
     TAKE =                      "take "
     USE =                       "use "
 
+
 class Used(str, Enum):
     BUTTON =                    "button"
     CARL =                      "carl"
@@ -93,6 +100,7 @@ class Used(str, Enum):
     PAINTING =                  "painting"
     PLANT =                     "plant"
     X_MARK =                    "x mark"
+
 
 class Color(str, Enum):
     BLACK =                     "\033[30m"
@@ -104,3 +112,4 @@ class Color(str, Enum):
     RESET =                     "\033[0m"
     WHITE =                     "\033[37m"
     YELLOW =                    "\033[33m"
+

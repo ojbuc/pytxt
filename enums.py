@@ -18,6 +18,31 @@ class Area(str, Enum):
     YARD =                      "yard"
 
 
+class Color(str, Enum):
+    BLACK =                     "\033[30m"
+    BLUE =                      "\033[34m"
+    CYAN =                      "\033[36m"
+    GREEN =                     "\033[32m"
+    MAGENTA =                   "\033[35m"
+    RED =                       "\033[31m"
+    RESET =                     "\033[0m"
+    WHITE =                     "\033[37m"
+    YELLOW =                    "\033[33m"
+
+
+class Command(str, Enum):
+    EX =                        "ex "
+    EXAMINE =                   "examine "
+    EXIT =                      "exit"
+    HELP =                      "help"
+    HISTORY =                   "history"
+    INV =                       "inv"
+    INVENTORY =                 "inventory"
+    QUIT =                      "quit"
+    TAKE =                      "take "
+    USE =                       "use "
+
+
 class Item(str, Enum):
     ATTIC_KEY =                 "attic key"
     BONE =                      "bone"
@@ -28,6 +53,11 @@ class Item(str, Enum):
     SHED_KEY =                  "shed key"
     UNTITLED_47 =               "untitled #47"
     WATERING_CAN =              "watering can"
+
+
+class ItemState(str, Enum):
+    EMPTY =                     "empty"
+    FULL =                      "full"
 
 
 class Object(str, Enum):
@@ -81,18 +111,6 @@ class Status(str, Enum):
     QUIT =                      "QUIT"
 
 
-class Command(str, Enum):
-    EX =                        "ex "
-    EXAMINE =                   "examine "
-    EXIT =                      "exit"
-    HELP =                      "help"
-    INV =                       "inv"
-    INVENTORY =                 "inventory"
-    QUIT =                      "quit"
-    TAKE =                      "take "
-    USE =                       "use "
-
-
 class Used(str, Enum):
     BUTTON =                    "button"
     CARL =                      "carl"
@@ -100,16 +118,3 @@ class Used(str, Enum):
     PAINTING =                  "painting"
     PLANT =                     "plant"
     X_MARK =                    "x mark"
-
-
-class Color(str, Enum):
-    BLACK =                     "\033[30m"
-    BLUE =                      "\033[34m"
-    CYAN =                      "\033[36m"
-    GREEN =                     "\033[32m"
-    MAGENTA =                   "\033[35m"
-    RED =                       "\033[31m"
-    RESET =                     "\033[0m"
-    WHITE =                     "\033[37m"
-    YELLOW =                    "\033[33m"
-

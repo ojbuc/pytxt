@@ -4,7 +4,6 @@ from logger import log
 
 
 def update_dynamic_visibility(state):
-    """ Update visibility of objects that depend on inventory items. """
     pos = state.current_position
     inv = state.inventory
 
@@ -48,7 +47,8 @@ def handle_movement(state, direction):
     )
     if can_go:
         next_area = AREAS[state.current_position][Area.EXITS][direction]
-        log(state, f"▶ You go {direction}: {next_area.value.replace('_', ' ')}")
+        log(state, f"▶ You go "
+                   f"{direction}: {next_area.value.replace('_', ' ')}")
         return next_area
 
     log(state, message)
@@ -56,7 +56,6 @@ def handle_movement(state, direction):
 
 
 def can_use_exit(current_position, direction, inventory):
-    """ Check if player can use this exit. """
     area = AREAS[current_position]
     if Area.EXIT_REQUIREMENTS not in area:
         return True, None
@@ -82,13 +81,11 @@ def can_use_exit(current_position, direction, inventory):
 
 
 def is_visible(area, interactable_name):
-    """ Check if an interactable object is visible to the player. """
     interactable = AREAS[area][Object.INTERACTABLES].get(interactable_name)
     return interactable and interactable.get(Object.VISIBLE, True)
 
 
 def reveal_interactable(area, interactable_name):
-    """ Make a hidden interactable object visible in the specified area. """
     if interactable_name in AREAS[area][Object.INTERACTABLES]:
         AREAS[area][Object.INTERACTABLES][interactable_name][
                 Object.VISIBLE] = True

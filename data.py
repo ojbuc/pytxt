@@ -1,4 +1,4 @@
-from enums import Area, Item, Object, Path
+from enums import Area, Item, ItemState, Object, Path
 
 
 ITEM_DESCRIPTIONS = {
@@ -156,7 +156,7 @@ AREAS = {
                 ),
                 Object.CAN_INTERACT: True,
                 Object.REQUIRES_ITEM: Item.WATERING_CAN,
-                Object.REQUIRES_ITEM_STATE: "full",
+                Object.REQUIRES_ITEM_STATE: ItemState.FULL, 
                 Object.INTERACTION_RESULT: (
                     "▶ The ashes are too dangerous to search through safely."
                 ),
@@ -170,7 +170,7 @@ AREAS = {
                     "key!"
                 ),
                 Object.GIVES_ITEM: Item.SHED_KEY,
-                Object.CHANGES_ITEM_STATE: {Item.WATERING_CAN: "empty"},
+                Object.CHANGES_ITEM_STATE: {Item.WATERING_CAN: ItemState.EMPTY},
                 Object.VISIBLE: False,
                 Object.USED: False,
             },
@@ -204,14 +204,18 @@ AREAS = {
                 ),
                 Object.CAN_INTERACT: True,
                 Object.REQUIRES_ITEM: Item.WATERING_CAN,
+                Object.REQUIRES_ITEM_STATE: ItemState.EMPTY,
                 Object.INTERACTION_RESULT: (
                     "▶ You need something to fill up with water."
+                ),
+                Object.FAILED_STATE_RESULT: (
+                    "▶ The watering can is already full."
                 ),
                 Object.SUCCESS_RESULT: (
                     "▶ You fill the watering can with water from the "
                     "garden hose."
                 ),
-                Object.CHANGES_ITEM_STATE: {Item.WATERING_CAN: "full"},
+                Object.CHANGES_ITEM_STATE: {Item.WATERING_CAN: ItemState.FULL}, 
                 Object.USED: False,
             },
             Object.MAGIC_PLANT: {
@@ -222,7 +226,7 @@ AREAS = {
                 ),
                 Object.CAN_INTERACT: True,
                 Object.REQUIRES_ITEM: Item.WATERING_CAN,
-                Object.REQUIRES_ITEM_STATE: "full",
+                Object.REQUIRES_ITEM_STATE: ItemState.FULL,
                 Object.INTERACTION_RESULT: (
                     "▶ The plant doesn't look like it needs anything."
                 ),
@@ -233,9 +237,9 @@ AREAS = {
                     "▶ You water the magic plant.\n▶ It glows brilliantly and "
                     "suddenly grows into an enormous beanstalk that "
                     "reaches up into the clouds!\n▶ A set of natural steps have"
-                    " formed in its trunk, creating a pathway to the sky."
+                    " formed in its trunk, creating a pathway towards the sky."
                 ),
-                Object.CHANGES_ITEM_STATE: {Item.WATERING_CAN: "empty"},
+                Object.CHANGES_ITEM_STATE: {Item.WATERING_CAN: ItemState.EMPTY},
                 Object.ENABLES_EXIT: Path.UP,
                 Object.VISIBLE: False,
                 Object.USED: False,
@@ -391,10 +395,16 @@ AREAS = {
     },
     Area.CHAOS_DIMENSION: {
         Area.DESCRIPTION: (
-            ""
+            "▶ An endless expanse of churning nothing stretches in every "
+            "direction.\n▶ The chaos doesn't rage... it simply is, vast and "
+            "indifferent, older than the house, older than Carl, older than "
+            "the concept of gardens, sheds and keys.\n▶ Within in it, a hidden "
+            "entity watches you. It does not seem pleased."
         ),
         Area.EXITS: {},
         Area.ITEMS: {},
-        Object.INTERACTABLES: {},
+        Object.INTERACTABLES: {
+            #Object.     
+        },
     },
 }

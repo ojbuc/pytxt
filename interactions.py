@@ -4,7 +4,6 @@ from data import (
         ITEM_DESCRIPTIONS,
         WRONG_ITEM_RESPONSES
 )
-from display import show_object_not_found
 from enums import Area, Object, Used
 from logger import log
 from utils import resolve_name
@@ -12,7 +11,6 @@ from world import is_visible, reveal_interactable
 
 
 def handle_examine_command(state, obj_name):
-    """ Handle examine commands for objects and items. """
     # Check inventory items first
     if obj_name in state.inventory:
         log(state, get_item_description(state, obj_name))
@@ -39,22 +37,22 @@ def handle_examine_command(state, obj_name):
             else:
                 log(state, obj[Object.DESCRIPTION])
             return
-        show_object_not_found(state)
+        log(state, "▶ There's no objects to examine here.")
         return
     # Check area items
     if obj_name in AREAS[state.current_position][Area.ITEMS]:
         log(state, AREAS[state.current_position][Area.ITEMS][obj_name])
         return
-    show_object_not_found(state)
+    log(state, "▶ There's no items to examine here.")
 
 
 def handle_use_command(state, obj_name, used_item=None):
     if obj_name not in AREAS[state.current_position][Object.INTERACTABLES]:
-        log(state, "▶ You can't interact with that.")
+        log(state, "▶ You can't use that here.")
         return
 
     if not is_visible(state.current_position, obj_name):
-        show_object_not_found(state)
+        log(state, "▶ You don't see that here.")
         return
 
     obj = AREAS[state.current_position][Object.INTERACTABLES][obj_name]
@@ -82,10 +80,6 @@ def handle_use_command(state, obj_name, used_item=None):
 
 
 def prompt_item_selection(inventory):
-    """
-    Prompt the player to pick an item from their inventory.
-    Returns the chosen item name, or None if cancelled.
-    """
     if not inventory:
         return None
 
@@ -114,7 +108,6 @@ def prompt_item_selection(inventory):
 
 
 def interact_with_object(state, obj_name, used_item=None):
-    """ Handle interaction with objects. """
     obj = AREAS[state.current_position][Object.INTERACTABLES][obj_name]
     # Check if object has already been used
     if obj.get(Object.USED, False):
@@ -135,30 +128,31 @@ def interact_with_object(state, obj_name, used_item=None):
     return result + effects
 
 
-def get_used_message(obj_name):
-    """ Get appropriate message for already used objects. """
-    if Used.BUTTON in obj_name.lower():
-        return "▶ The button has already been pressed."
-    if Used.CARL in obj_name.lower():
-        return (
+USED_MESSAGES = {
+    Used.BUTTON:"▶ The button has already been pressed.",
+    Used.CARL:(
             "▶ Carl is happily chewing his bone and gives you a contented wag."
-        )
-    if Used.DRAWER in obj_name.lower():
-        return "▶ The drawer is already open and empty."
-    if Used.PAINTING in obj_name.lower():
-        return "▶ You've already taken the painting."
-    if Used.PLANT in obj_name.lower():
-        return (
-            "▶ The magic plant has grown into a magnificent beanstalk. "
-            "▶ It doesn't need any more water."
-        )
-    if Used.X_MARK in obj_name.lower():
-        return "▶ You've already dug here. There's just a hole in the ground."
-    return "▶ You've already used this."
+    ),
+    Used.DRAWER:"▶ The drawer is already open and empty.",
+    Used.PAINTING:"▶ You've already taken the painting.",
+    Used.PLANT:(
+        "▶ The magic plant has grown into a magnificent beanstalk. "
+        "▶ It doesn't need any more water."
+    ),
+    Used.X_MARK:"▶ You've already dug here. There's just a hole in the ground.",
+}
+
+
+def get_used_message(obj_name):
+    name = obj_name.lower()
+    message = next(
+        (msg for k, msg in USED_MESSAGES.items() if k in name),
+        "▶ You've already used this."
+    )
+    return message
 
 
 def handle_item_requirements(state, obj, obj_name=None, used_item=None):
-    """ Handle object interaction requirements and return result message. """
     required_item = obj[Object.REQUIRES_ITEM]
     # If the player specified an item, test that item specifically
     if used_item is not None:
@@ -187,9 +181,6 @@ def handle_item_requirements(state, obj, obj_name=None, used_item=None):
 
 
 def get_wrong_item_response(obj_name, used_item):
-    """ 
-    Return the appropriate response when the wrong item is used on an object.
-    """
     obj_responses = WRONG_ITEM_RESPONSES.get(obj_name)
     if obj_responses:
         if isinstance(obj_responses, dict):
@@ -199,7 +190,6 @@ def get_wrong_item_response(obj_name, used_item):
 
 
 def _mark_as_used(obj, obj_name):
-    """ Mark an object as used when appropriate. """
     if any([
         Object.GIVES_ITEM in obj
         or Object.ALSO_GIVES in obj
@@ -211,7 +201,6 @@ def _mark_as_used(obj, obj_name):
 
 
 def _apply_state_changes(state, obj):
-    """ Update item states (e.g. watering can empty/full). """
     if Object.CHANGES_ITEM_STATE in obj:
         for item, new_state in obj[Object.CHANGES_ITEM_STATE].items():
             if item in state.inventory:
@@ -219,7 +208,6 @@ def _apply_state_changes(state, obj):
 
 
 def _apply_item_removals(obj, obj_name, inventory, result_parts):
-    """ Handle removing items from inventory after use. """
     consumed_objects = {
         Object.CARL: "gave Carl the",
         Object.PEDESTAL: "placed the",
@@ -235,14 +223,13 @@ def _apply_item_removals(obj, obj_name, inventory, result_parts):
 
 
 def _apply_item_grants(state, obj, obj_name, result_parts):
-    """ Handle giving primary, secondary and painting-become items. """
     if obj.get(Object.USED, False):
         return
 
     if Object.GIVES_ITEM in obj:
         state.inventory.append(obj[Object.GIVES_ITEM])
         result_parts.append("\n▶ (You now have: "
-                            f" {obj[Object.GIVES_ITEM].value})")
+                            f"{obj[Object.GIVES_ITEM].value})")
 
     if Object.ALSO_GIVES in obj:
         state.inventory.append(obj[Object.ALSO_GIVES])
@@ -262,7 +249,6 @@ def _apply_item_grants(state, obj, obj_name, result_parts):
 
 
 def apply_interaction_effects(state, obj, obj_name, success):
-    """ Apply the effects of a successful interaction. """
     if not success:
         return ""
 
@@ -292,7 +278,6 @@ def handle_take_command(state, item_name):
 
 
 def get_item_description(state, item_name):
-    """ Get description for an item based on its current state. """
     if item_name in state.item_states:
         item_state = state.item_states[item_name]
         if isinstance(ITEM_DESCRIPTIONS[item_name], dict):

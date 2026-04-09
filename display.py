@@ -1,7 +1,6 @@
 import os
 from data import AREAS
 from enums import Area, Color, Object
-from logger import log
 from world import can_use_exit, is_visible
 
 
@@ -78,10 +77,6 @@ def display_area_information(state):
         print(f"  Items here: {', '.join(items)}")
     # Show interactables
     display_interactables(state.current_position)
-
-
-def show_object_not_found(state):
-    log(state, "▶ You don't see that here.")
 
 
 def clear_screen():

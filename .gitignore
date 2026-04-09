@@ -1,3 +1,4 @@
 .pylintrc
+pyrightconfig.json
 
 __pycache__/

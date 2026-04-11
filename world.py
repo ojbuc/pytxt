@@ -7,6 +7,12 @@ def update_dynamic_visibility(state):
     pos = state.current_position
     inv = state.inventory
 
+    if pos == Area.LIVING_ROOM:
+        ashes = AREAS[pos][Object.INTERACTABLES].get(Object.ASHES, {})
+        if ashes.get(Object.USED):
+            AREAS[pos][Area.DESCRIPTION] = AREAS[
+                  pos][Area.POST_ASHES_DESCRIPTION]
+
     if pos == Area.LIVING_ROOM and Item.SHED_KEY in inv:
         # Make ashes invisible when player has shed key
         if (

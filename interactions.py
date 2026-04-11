@@ -57,7 +57,12 @@ def handle_use_command(state, obj_name, used_item=None):
 
     obj = AREAS[state.current_position][Object.INTERACTABLES][obj_name]
     # If the object accepts items and none was specified, prompt the player
-    if used_item is None and state.inventory and obj.get(Object.REQUIRES_ITEM):
+    if (
+        used_item is None
+        and state.inventory
+        and obj.get(Object.REQUIRES_ITEM)
+        and not obj.get(Object.USED, False)
+    ):
         used_item = prompt_item_selection(state.inventory)
         if used_item is None:
             log(state, "▶ Never mind.")
@@ -133,10 +138,12 @@ USED_MESSAGES = {
     Used.CARL:(
             "▶ Carl is happily chewing his bone and gives you a contented wag."
     ),
-    Used.DRAWER:"▶ The drawer is already open and empty.",
-    Used.PAINTING:"▶ You've already taken the painting.",
+    Used.DRAWER:"▶ The drawer is empty.",
+    Used.FIREPLACE:(
+        "▶ You've already searched the fireplace."
+    ),
     Used.PLANT:(
-        "▶ The magic plant has grown into a magnificent beanstalk. "
+        "▶ The magic plant has grown into a magnificent beanstalk. \n"
         "▶ It doesn't need any more water."
     ),
     Used.X_MARK:"▶ You've already dug here. There's just a hole in the ground.",

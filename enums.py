@@ -14,6 +14,7 @@ class Area(str, Enum):
     KITCHEN =                   "kitchen"
     LIVING_ROOM =               "living room"
     MESSAGE =                   "message"
+    POST_ASHES_DESCRIPTION =    "post_ashes_description"
     SHED =                      "shed"
     YARD =                      "yard"
 
@@ -115,6 +116,7 @@ class Used(str, Enum):
     BUTTON =                    "button"
     CARL =                      "carl"
     DRAWER =                    "drawer"
+    FIREPLACE =                 "fireplace"
     PAINTING =                  "painting"
     PLANT =                     "plant"
     X_MARK =                    "x mark"

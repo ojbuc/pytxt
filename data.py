@@ -55,10 +55,65 @@ WRONG_ITEM_RESPONSES = {
 # "garden hose": "▶ That doesn't seem to work with the hose.",
 #
 # Example of per-item responses:
-# "ashes": {
-#     "shovel": "▶ Digging through hot ashes seems unwise.",
-#     "bone":   "▶ The ashes don't want your bone.",
-# },
+    Object.ASHES: {
+        Item.GARDEN_KEY: "▶ Throwing the garden key into hot ashes "
+                         "seems unwise.",
+    },
+    Object.CARL: {
+        Item.ATTIC_KEY: "▶ Carl doesn't want the key, he gazes longingly at "
+                        "the clouds.",
+        Item.GARDEN_KEY: "▶ Carl doesn't want the key, he rejects the concept "
+                         "of keys, unlocking and confinement.",
+        Item.SHED_KEY:"▶ Carl doesn't want the key, he rejects the concept "
+                         "of keys, unlocking and confinement.",
+        Item.SHOVEL: "▶ Digging into Carl would make quite a mess.\n▶ You feel"
+                     " like this is a decision that you will regret.",
+        Item.WATERING_CAN: "▶ Carl doesn't want water, he feels no thirst, "
+                           "only a deep hunger.",
+    },
+    Object.GARDEN_HOSE: {
+        Item.ATTIC_KEY: "▶ The garden hose isn't locked but the attic is...",
+        Item.BONE: "▶ Wetting the bone here has no effect.",
+        Item.GARDEN_KEY: "▶ The garden hose isn't locked, nice try though.",
+        Item.SHED_KEY: "▶ The garden hose isn't locked, you should use this "
+                       "on the shed instead.",
+        Item.SHOVEL: "▶ Digging into the garden hose sounds like a bad idea, "
+                     "it provides you with precious water after all.",
+        Item.UNTITLED_47: "▶ You resist the urge to damage this beautiful "
+                          "artwork with water.",
+    },
+    Object.MAGIC_PLANT: {
+        Item.ATTIC_KEY: "▶ You can't unlock a plant with a key.",
+        Item.BONE: "▶ An ancient magic force prevents you from striking the "
+                   "plant with your bone.",
+        Item.GARDEN_KEY: "▶ You can't unlock a plant with a key.",
+        Item.SHED_KEY: "▶ You can't unlock a plant with a key.",
+        Item.SHOVEL: "▶ The plant suddenly summons forth a magical barrier, "
+                     "shielding it from harm.\n▶ The shovel can't dig it.",
+        Item.UNTITLED_47: "▶ The plant glows faintly luminescent, it looks to "
+                          "be reacting the presence of the painting.\n▶ "
+                          "Perhaps the painting is important, you feel that you"
+                          " should hold on to it.",
+    },
+    Object.PEDESTAL: {
+        Item.ATTIC_KEY: "▶ There's no need to unlock the pedestal, "
+                        "it has no lock.",
+        Item.BONE: "▶ The bone won't fit in the groove.",
+        Item.GARDEN_KEY: "▶ There's no need to unlock the pedestal, "
+                         "it has no lock.",
+        Item.SHED_KEY: "▶ There's no need to unlock the pedestal, "
+                       "it has no lock.",
+        Item.SHOVEL: "▶ The shovel won't fit in the groove.",
+        Item.UNTITLED_47: "▶ The painting won't fit in the groove.",
+    },
+    Object.X_MARK: {
+        Item.GARDEN_KEY: "▶ You can't unlock the ground with a key, "
+                         "it's just dirt.",
+        Item.SHED_KEY: "▶ You can't unlock the ground with a key, "
+                       "it's just dirt.",
+        Item.WATERING_CAN: "▶ There's no need to water the ground here.",
+        Item.UNTITLED_47: "▶ You shouldn't litter here.",
+    },
 }
 
 GENERIC_WRONG_ITEM_RESPONSE = (
@@ -96,6 +151,10 @@ AREAS = {
     },
     Area.LIVING_ROOM: {
         Area.DESCRIPTION: "A cozy living room with a fireplace.",
+        Area.POST_ASHES_DESCRIPTION: (
+            "The warmth of the fireplace has faded, the living room is a bit "
+            "chilly now."
+        ),
         Area.EXITS: {Path.SOUTH: Area.KITCHEN, Path.UP: Area.ATTIC},
         Area.EXIT_REQUIREMENTS: {
             Path.UP: {
@@ -120,7 +179,7 @@ AREAS = {
                     ),
                 Object.POST_ASHES_DESCRIPTION: (
                     "▶ A fireplace with damp ashes and a button under the "
-                    "mantle.\n▶ The ashes inside are extinguisehd.\n▶ The "
+                    "mantle.\n▶ The ashes inside are extinguished.\n▶ The "
                     "button has already been pressed."
                     ),
                 Object.CAN_INTERACT: True,

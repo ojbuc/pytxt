@@ -29,7 +29,7 @@ def _cmd_take(state, command):
 def _cmd_use(state, command):
     visible_interactables = [
         name for name in AREAS[state.current_position][Object.INTERACTABLES]
-        if is_visible(state.current_position, name)
+        if is_visible(state, state.current_position, name)
     ]
     remainder = command[4:]  # Remove "use "
     used_item = None
@@ -65,7 +65,7 @@ def _cmd_use(state, command):
 def _cmd_examine(state, command):
     visible_interactables = [
         name for name in AREAS[state.current_position][Object.INTERACTABLES]
-        if is_visible(state.current_position, name)
+        if is_visible(state, state.current_position, name)
     ]
     area_items = list(AREAS[state.current_position][Area.ITEMS].keys())
     # Handle other commands

@@ -1,17 +1,18 @@
-import os
 from data import AREAS
-from enums import Area, Color, Object
-from world import can_use_exit, is_visible
+from enums import Area, Color, Item, Object
+from world import can_use_exit, is_used, is_visible
+
+import subprocess
 
 
-def display_interactables(current_position):
+def display_interactables(state, current_position):
     if Object.INTERACTABLES not in AREAS[current_position]:
         return
 
     visible_interactables = [
         name
         for name in AREAS[current_position][Object.INTERACTABLES]
-        if is_visible(current_position, name)
+        if is_visible(state, current_position, name)
     ]
 
     if not visible_interactables:
@@ -55,7 +56,7 @@ def display_area_information(state):
     print("=" * 40)
 
     print("Current area:")
-    print("  " + AREAS[state.current_position][Area.DESCRIPTION])
+    print("  " + get_area_description(state, state.current_position))
     # Show exits
     exits = AREAS[state.current_position][Area.EXITS]
     exit_reqs = AREAS[state.current_position].get(Area.EXIT_REQUIREMENTS, {})
@@ -64,7 +65,8 @@ def display_area_information(state):
         for direction, destination in exits.items():
             requirement = exit_reqs.get(direction, {})
             if Object.CONDITION in requirement:
-                can_go, _ = can_use_exit(state.current_position, direction, [])
+                can_go, _ = can_use_exit(state, state.current_position,
+                                         direction, [])
                 if not can_go:
                     continue
             print(
@@ -76,8 +78,20 @@ def display_area_information(state):
         items = list(AREAS[state.current_position][Area.ITEMS].keys())
         print(f"  Items here: {', '.join(items)}")
     # Show interactables
-    display_interactables(state.current_position)
+    display_interactables(state, state.current_position)
+
+
+def get_area_description(state, area):
+    default = AREAS[area][Area.DESCRIPTION]
+
+    if area == Area.LIVING_ROOM and is_used(state, area, Object.ASHES):
+        return AREAS[area][Area.POST_ASHES_DESCRIPTION]
+
+    if area == Area.YARD and Item.DOG_STATUE in state.inventory:
+        return "A ground of fertile green and earthy browns."
+
+    return default
 
 
 def clear_screen():
-    os.system("clear")
+    subprocess.run("clear")

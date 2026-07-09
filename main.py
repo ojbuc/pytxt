@@ -17,15 +17,15 @@ def main():
             if not command:
                 continue
 
-            output = process_command(state, command)
+            next_state = process_command(state, command)
 
-            if output == Status.QUIT:
+            if next_state == Status.QUIT:
                 break
-            if output == Status.CONTINUE:
+            if next_state == Status.CONTINUE:
                 continue
 
-            assert isinstance(output, Area)
-            state.current_position = output
+            assert isinstance(next_state, Area)
+            state.current_position = next_state
             print()
 
     except KeyboardInterrupt:

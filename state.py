@@ -9,8 +9,9 @@ class GameState:
     full_history: list = field(default_factory=list)
     inventory: list = field(default_factory=list)
     item_states: dict = field(default_factory=lambda: 
-                            {Item.WATERING_CAN: ItemState.EMPTY}
-                        )
+                            {Item.WATERING_CAN: ItemState.EMPTY})
     new_log_lines: int = 0
+    object_used: set = field(default_factory=set)
+    object_visible: dict = field(default_factory=dict)
     safe_revealed: bool = False
     shown_inventory_help: bool = False

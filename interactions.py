@@ -7,7 +7,7 @@ from data import (
 from enums import Area, Object, Used
 from logger import log
 from utils import resolve_name
-from world import is_visible, reveal_interactable
+from world import is_used, is_visible, mark_used, reveal_interactable
 
 
 def handle_examine_command(state, obj_name):
@@ -17,22 +17,21 @@ def handle_examine_command(state, obj_name):
         return
     # Check area interactables
     if obj_name in AREAS[state.current_position][Object.INTERACTABLES]:
-        if is_visible(state.current_position, obj_name):
+        if is_visible(state, state.current_position, obj_name):
             obj = AREAS[state.current_position][Object.INTERACTABLES][obj_name]
             if obj_name == Object.FIREPLACE:
-                interactables = AREAS[state.current_position][
-                                      Object.INTERACTABLES]
-                button = interactables.get(Object.BUTTON, {})
-                ashes = interactables.get(Object.ASHES, {})
-                if ashes.get(Object.USED):
+                pos = state.current_position
+                if is_used(state, pos, Object.ASHES):
                     log(state, obj[Object.POST_ASHES_DESCRIPTION])
-                elif button.get(Object.USED):
+                elif is_used(state, pos, Object.BUTTON):
                     log(state, obj[Object.POST_BUTTON_DESCRIPTION])
-                elif obj.get(Object.USED) and Object.USED_DESCRIPTION in obj:
+                elif (is_used(state, pos, obj_name) 
+                      and Object.USED_DESCRIPTION in obj):
                     log(state, obj[Object.USED_DESCRIPTION])
                 else:
                     log(state, obj[Object.DESCRIPTION])
-            elif obj.get(Object.USED) and Object.USED_DESCRIPTION in obj:
+            elif (is_used(state, state.current_position, obj_name)
+                  and Object.USED_DESCRIPTION in obj):
                 log(state, obj[Object.USED_DESCRIPTION])
             else:
                 log(state, obj[Object.DESCRIPTION])
@@ -51,7 +50,7 @@ def handle_use_command(state, obj_name, used_item=None):
         log(state, "▶ You can't use that here.")
         return
 
-    if not is_visible(state.current_position, obj_name):
+    if not is_visible(state, state.current_position, obj_name):
         log(state, "▶ You don't see that here.")
         return
 
@@ -60,8 +59,7 @@ def handle_use_command(state, obj_name, used_item=None):
     if (
         used_item is None
         and state.inventory
-        and obj.get(Object.REQUIRES_ITEM)
-        and not obj.get(Object.USED, False)
+        and not is_used(state, state.current_position, obj_name)
     ):
         used_item = prompt_item_selection(state.inventory)
         if used_item is None:
@@ -69,19 +67,22 @@ def handle_use_command(state, obj_name, used_item=None):
             return
     # Capture reveals before the interaction marks object as used
     reveals_target = (
-            obj.get(Object.REVEALS) if not obj.get(Object.USED, False) else None
+            obj.get(Object.REVEALS)
+            if not is_used(state, state.current_position, obj_name)
+            else None
     )
 
     output = interact_with_object(state, obj_name, used_item=used_item)
     log(state, output)
 
     if reveals_target:
-        reveal_interactable(state.current_position, reveals_target)
+        reveal_interactable(state, state.current_position, reveals_target)
     # Handle reveals
     obj = AREAS[state.current_position][Object.INTERACTABLES].get(obj_name)
-    if obj and Object.REVEALS in obj and not obj.get(Object.USED, False):
-        reveal_interactable(state.current_position, obj[Object.REVEALS])
-        obj[Object.USED] = True
+    if (obj and Object.REVEALS in obj
+        and not is_used(state, state.current_position, obj_name)):
+        reveal_interactable(state, state.current_position, obj[Object.REVEALS])
+        mark_used(state, state.current_position, obj_name)
 
 
 def prompt_item_selection(inventory):
@@ -115,7 +116,7 @@ def prompt_item_selection(inventory):
 def interact_with_object(state, obj_name, used_item=None):
     obj = AREAS[state.current_position][Object.INTERACTABLES][obj_name]
     # Check if object has already been used
-    if obj.get(Object.USED, False):
+    if is_used(state, state.current_position, obj_name):
         return get_used_message(obj_name)
     # Handle objects with item requirements
     if Object.REQUIRES_ITEM in obj:
@@ -196,15 +197,15 @@ def get_wrong_item_response(obj_name, used_item):
     return GENERIC_WRONG_ITEM_RESPONSE
 
 
-def _mark_as_used(obj, obj_name):
-    if any([
+def _mark_as_used(obj, obj_name, state):
+    if (
         Object.GIVES_ITEM in obj
         or Object.ALSO_GIVES in obj
         or Object.BECOMES_ITEM in obj
         or obj_name == Object.CARL
         or Object.ENABLES_EXIT in obj
-    ]):
-        obj[Object.USED] = True
+    ):
+        mark_used(state, state.current_position, obj_name)
 
 
 def _apply_state_changes(state, obj):
@@ -230,7 +231,7 @@ def _apply_item_removals(obj, obj_name, inventory, result_parts):
 
 
 def _apply_item_grants(state, obj, obj_name, result_parts):
-    if obj.get(Object.USED, False):
+    if is_used(state, state.current_position, obj_name):
         return
 
     if Object.GIVES_ITEM in obj:
@@ -264,7 +265,7 @@ def apply_interaction_effects(state, obj, obj_name, success):
     _apply_item_grants(state, obj, obj_name, result_parts)
     _apply_item_removals(obj, obj_name, state.inventory, result_parts)
     _apply_state_changes(state, obj)
-    _mark_as_used(obj, obj_name)
+    _mark_as_used(obj, obj_name, state)
 
     return "".join(result_parts)
 

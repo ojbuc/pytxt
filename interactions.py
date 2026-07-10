@@ -251,10 +251,6 @@ def _apply_item_grants(state, obj, obj_name, result_parts):
                             f"{obj[Object.BECOMES_ITEM].value})")
         if obj_name == Object.LOOSE_PAINTING:
             state.safe_revealed = True
-            for area in AREAS.values():
-                if obj_name in area.get(Object.INTERACTABLES, {}):
-                    del area[Object.INTERACTABLES][obj_name]
-                    break
 
 
 def apply_interaction_effects(state, obj, obj_name, success):

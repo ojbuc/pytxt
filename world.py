@@ -82,6 +82,10 @@ def is_visible(state, area, obj_name):
     if key in state.object_visible:
         return state.object_visible[key]
     interactable = AREAS[area][Object.INTERACTABLES].get(obj_name)
+    if not interactable:
+        return False
+    if Object.BECOMES_ITEM in interactable and is_used(state, area, obj_name):
+        return False
     return interactable and interactable.get(Object.VISIBLE, True)
 
 

@@ -147,9 +147,9 @@ def process_command(state, command):
     else:
         if command in (Command.INVENTORY, Command.INV):
             handle_inventory_command(state)
-        elif command in Command.HISTORY:
+        elif command == Command.HISTORY:
             show_history(state)
-        elif command in Command.HELP:
+        elif command == Command.HELP:
             show_help(state)
         elif command in (Command.QUIT, Command.EXIT):
             if handle_quit_command(state):
@@ -230,7 +230,7 @@ def show_help(state):
     log(state, "  • inventory OR inv - Show your inventory")
     log(state, "  • history - View full command history")
     log(state, "  • help - Show this help menu")
-    log(state, "  • quit OR exit - End the game without saving progress)")
+    log(state, "  • quit OR exit - End the game (without saving progress)")
 
 
 def handle_quit_command(state):

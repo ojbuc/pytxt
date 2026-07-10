@@ -1,17 +1,17 @@
 from data import AREAS
-from enums import Area, Color, Item, Object
+from enums import Area, AreaKey, Color, Item, Object, ObjectKey
 from world import can_use_exit, is_used, is_visible
 
 import subprocess
 
 
 def display_interactables(state, current_position):
-    if Object.INTERACTABLES not in AREAS[current_position]:
+    if ObjectKey.INTERACTABLES not in AREAS[current_position]:
         return
 
     visible_interactables = [
         name
-        for name in AREAS[current_position][Object.INTERACTABLES]
+        for name in AREAS[current_position][ObjectKey.INTERACTABLES]
         if is_visible(state, current_position, name)
     ]
 
@@ -23,9 +23,9 @@ def display_interactables(state, current_position):
     both = []
 
     for name in visible_interactables:
-        obj = AREAS[current_position][Object.INTERACTABLES][name]
+        obj = AREAS[current_position][ObjectKey.INTERACTABLES][name]
         can_examine = True  # All objects can be examined
-        can_use = obj.get(Object.CAN_INTERACT, False)
+        can_use = obj.get(ObjectKey.CAN_INTERACT, False)
         obj_name = name.value if hasattr(name, 'value') else name
 
         if can_examine and can_use:
@@ -58,13 +58,13 @@ def display_area_information(state):
     print("Current area:")
     print("  " + get_area_description(state, state.current_position))
     # Show exits
-    exits = AREAS[state.current_position][Area.EXITS]
-    exit_reqs = AREAS[state.current_position].get(Area.EXIT_REQUIREMENTS, {})
+    exits = AREAS[state.current_position][AreaKey.EXITS]
+    exit_reqs = AREAS[state.current_position].get(AreaKey.EXIT_REQUIREMENTS, {})
     if exits:
         print("  Exits:")
         for direction, destination in exits.items():
             requirement = exit_reqs.get(direction, {})
-            if Object.CONDITION in requirement:
+            if ObjectKey.CONDITION in requirement:
                 can_go, _ = can_use_exit(state, state.current_position,
                                          direction, [])
                 if not can_go:
@@ -74,18 +74,18 @@ def display_area_information(state):
                 f"{destination.value.replace('_', ' ')}"
             )
     # Show items
-    if AREAS[state.current_position][Area.ITEMS]:
-        items = list(AREAS[state.current_position][Area.ITEMS].keys())
+    if AREAS[state.current_position][AreaKey.ITEMS]:
+        items = list(AREAS[state.current_position][AreaKey.ITEMS].keys())
         print(f"  Items here: {', '.join(items)}")
     # Show interactables
     display_interactables(state, state.current_position)
 
 
 def get_area_description(state, area):
-    default = AREAS[area][Area.DESCRIPTION]
+    default = AREAS[area][AreaKey.DESCRIPTION]
 
     if area == Area.LIVING_ROOM and is_used(state, area, Object.ASHES):
-        return AREAS[area][Area.POST_ASHES_DESCRIPTION]
+        return AREAS[area][AreaKey.POST_ASHES_DESCRIPTION]
 
     if area == Area.YARD and Item.DOG_STATUE in state.inventory:
         return "A ground of fertile green and earthy browns."

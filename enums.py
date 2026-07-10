@@ -5,18 +5,21 @@ class Area(str, Enum):
     ATTIC =                     "attic"
     CHAOS_DIMENSION =           "chaos dimension"
     CLOUD_47 =                  "cloud 47"
+    GARDEN =                    "garden"
+    KITCHEN =                   "kitchen"
+    LIVING_ROOM =               "living room"
+    SHED =                      "shed"
+    YARD =                      "yard"
+
+
+class AreaKey(str, Enum):
     DESCRIPTION =               "description"
     EXIT_REQUIREMENTS =         "exit_requirements"
     EXITS =                     "exits"
-    GARDEN =                    "garden"
     ITEM =                      "item"
     ITEMS =                     "items"
-    KITCHEN =                   "kitchen"
-    LIVING_ROOM =               "living room"
     MESSAGE =                   "message"
     POST_ASHES_DESCRIPTION =    "post_ashes_description"
-    SHED =                      "shed"
-    YARD =                      "yard"
 
 
 class Color(str, Enum):
@@ -62,39 +65,42 @@ class ItemState(str, Enum):
 
 
 class Object(str, Enum):
-    ALSO_GIVES =                "also_gives"
     ASHES =                     "ashes"
-    BECOMES_ITEM =              "becomes_item"
     BUTTON =                    "button"
-    CAN_INTERACT =              "can_interact"
     CARL =                      "carl"
+    FIREPLACE =                 "fireplace"
+    GARDEN_HOSE =               "garden hose"
+    KITCHEN_DRAWER =            "kitchen drawer"
+    LOOSE_PAINTING =            "loose painting"
+    MAGIC_PLANT =               "magic plant"
+    PEDESTAL =                  "pedestal"
+    SAFE =                      "safe"
+    STATUE_PLACED =             "statue_placed"
+    WATERED_PLANT =             "watered_plant"
+    X_MARK =                    "x mark"
+
+
+class ObjectKey(str, Enum):
+    ALSO_GIVES =                "also_gives"
+    BECOMES_ITEM =              "becomes_item"
+    CAN_INTERACT =              "can_interact"
     CHANGES_ITEM_STATE =        "changes_item_state"
     CONDITION =                 "condition"
     DESCRIPTION =               "description"
     ENABLES_EXIT =              "enables_exit"
     FAILED_STATE_RESULT =       "failed_state_result"
-    FIREPLACE =                 "fireplace"
-    GARDEN_HOSE =               "garden hose"
     GIVES_ITEM =                "gives_item"
     INTERACTABLES =             "interactables"
     INTERACTION_RESULT =        "interaction_result"
-    KITCHEN_DRAWER =            "kitchen drawer"
-    LOOSE_PAINTING =            "loose painting"
-    MAGIC_PLANT =               "magic plant"
-    PEDESTAL =                  "pedestal"
     POST_ASHES_DESCRIPTION =    "post_ashes_description"
     POST_BUTTON_DESCRIPTION =   "post_button_description"
     REQUIRES_ITEM =             "requires_item"
     REQUIRES_ITEM_STATE =       "requires_item_state"
     REVEALS =                   "reveals"
-    SAFE =                      "safe"
-    STATUE_PLACED =             "statue_placed"
     SUCCESS_RESULT =            "success_result"
-    USED =                      "used"
     USED_DESCRIPTION =          "used_description"
     VISIBLE =                   "visible"
-    WATERED_PLANT =             "watered_plant"
-    X_MARK =                    "x mark"
+
 
 
 class Path(str, Enum):

@@ -1,5 +1,5 @@
 from data import AREAS
-from enums import Area, Command, Object, Status
+from enums import AreaKey, Command, ObjectKey, Status
 from interactions import (
         handle_examine_command, handle_take_command, handle_use_command
 )
@@ -11,7 +11,7 @@ import subprocess
 
 
 def _cmd_take(state, command):
-    area_items = list(AREAS[state.current_position][Area.ITEMS].keys())
+    area_items = list(AREAS[state.current_position][AreaKey.ITEMS].keys())
     partial = command[5:]  # Remove "take "
     obj_name, hint = resolve_name(partial, area_items)
     if hint:
@@ -28,7 +28,7 @@ def _cmd_take(state, command):
 
 def _cmd_use(state, command):
     visible_interactables = [
-        name for name in AREAS[state.current_position][Object.INTERACTABLES]
+        name for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
         if is_visible(state, state.current_position, name)
     ]
     remainder = command[4:]  # Remove "use "
@@ -64,10 +64,10 @@ def _cmd_use(state, command):
 
 def _cmd_examine(state, command):
     visible_interactables = [
-        name for name in AREAS[state.current_position][Object.INTERACTABLES]
+        name for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
         if is_visible(state, state.current_position, name)
     ]
-    area_items = list(AREAS[state.current_position][Area.ITEMS].keys())
+    area_items = list(AREAS[state.current_position][AreaKey.ITEMS].keys())
     # Handle other commands
     partial = (
             command[8:] if command.startswith(Command.EXAMINE)
@@ -108,10 +108,10 @@ def _build_world_names(items_only=False, interactables_only=False):
     names = set()
     for area in AREAS.values():
         if not interactables_only:
-            for item in area.get(Area.ITEMS, {}).keys():
+            for item in area.get(AreaKey.ITEMS, {}).keys():
                 names.add(item.value if hasattr(item, 'value') else item)
         if not items_only:
-            for obj in area.get(Object.INTERACTABLES, {}).keys():
+            for obj in area.get(ObjectKey.INTERACTABLES, {}).keys():
                 names.add(obj.value if hasattr(obj, 'value') else obj)
     return names
 
@@ -171,7 +171,7 @@ def parse_movement_command(state, command):
     parts = command.split()
     if not parts:
         return None
-    exits = AREAS[state.current_position][Area.EXITS]
+    exits = AREAS[state.current_position][AreaKey.EXITS]
     # Resolve alias first
     first = DIRECTION_ALIASES.get(parts[0], parts[0])
     # "n", "north", "go north"

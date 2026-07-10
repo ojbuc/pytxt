@@ -59,6 +59,7 @@ def handle_use_command(state, obj_name, used_item=None):
     if (
         used_item is None
         and state.inventory
+        and Object.REQUIRES_ITEM in obj
         and not is_used(state, state.current_position, obj_name)
     ):
         used_item = prompt_item_selection(state.inventory)

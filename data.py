@@ -327,7 +327,7 @@ AREAS = {
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.REQUIRES_ITEM: Item.SHOVEL,
                 ObjectKey.INTERACTION_RESULT: (
-                    "▶ You need something to dig with.",
+                    "▶ You need something to dig with."
                     ),
                 ObjectKey.SUCCESS_RESULT: (
                     "▶ You dig at the X mark with your shovel.\n▶ After a few "

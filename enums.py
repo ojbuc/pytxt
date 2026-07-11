@@ -102,7 +102,6 @@ class ObjectKey(str, Enum):
     VISIBLE =                   "visible"
 
 
-
 class Path(str, Enum):
     DOWN =                      "down"
     EAST =                      "east"

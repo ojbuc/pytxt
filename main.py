@@ -3,6 +3,7 @@ import argparse
 from commands import process_command
 from display import display_area_information
 from enums import Area, Status
+from logger import log
 from state import GameState
 from world import update_dynamic_visibility
 
@@ -32,8 +33,9 @@ def _get_debug_state(raw_area):
         print(f"▶ [DEBUG] Unknown area '{raw_area}'. Valid options: {valid}\n")
         return None
 
-    print(f"▶ [DEBUG] Starting in '{area.value}' with full inventory.\n")
-    return GameState.debug_state(area)
+    state = GameState.debug_state(area)
+    log(state, f"▶ [DEBUG] Starting in '{area.value}' with full inventory.\n")
+    return state
 
 
 def main():

@@ -1,3 +1,5 @@
+import argparse
+
 from commands import process_command
 from display import display_area_information
 from enums import Area, Status
@@ -5,9 +7,39 @@ from state import GameState
 from world import update_dynamic_visibility
 
 
+def _parse_args():
+    parser = argparse.ArgumentParser(description="Text adventure game.")
+    parser.add_argument(
+            "--start",
+            metavar="AREA",
+            help=(
+                "Start in a specific area with full inventory, for testing. "
+                f"Choices: {', '.join(a.value for a in Area)}"
+            ),
+    )
+    return parser.parse_args()
+
+
+def _get_debug_state(raw_area):
+    if not raw_area:
+        return None
+
+    normalized = raw_area.strip().lower()
+    area = next((a for a in Area if a.value == normalized), None)
+
+    if area is None:
+        valid = ", ".join(a.value for a in Area)
+        print(f"▶ [DEBUG] Unknown area '{raw_area}'. Valid options: {valid}\n")
+        return None
+
+    print(f"▶ [DEBUG] Starting in '{area.value}' with full inventory.\n")
+    return GameState.debug_state(area)
+
+
 def main():
     try:
-        state = GameState()
+        args = _parse_args()
+        state = _get_debug_state(args.start) or GameState()
 
         while True:
             update_dynamic_visibility(state)

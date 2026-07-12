@@ -1,8 +1,8 @@
+import subprocess
+
 from data import AREAS
 from enums import Area, AreaKey, Color, Item, Object, ObjectKey
 from world import can_use_exit, is_used, is_visible
-
-import subprocess
 
 
 def display_interactables(state, current_position):
@@ -89,7 +89,6 @@ def get_area_description(state, area):
 
     if area == Area.YARD and Item.DOG_STATUE in state.inventory:
         return "A ground of fertile green and earthy browns."
-
     return default
 
 

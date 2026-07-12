@@ -262,12 +262,10 @@ def apply_interaction_effects(state, obj, obj_name, success):
         return ""
 
     result_parts = []
-
     _apply_item_grants(state, obj, obj_name, result_parts)
     _apply_item_removals(obj, obj_name, state.inventory, result_parts)
     _apply_state_changes(state, obj)
     _mark_as_used(obj, obj_name, state)
-
     return "".join(result_parts)
 
 

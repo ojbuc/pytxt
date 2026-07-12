@@ -15,3 +15,22 @@ class GameState:
     object_visible: dict = field(default_factory=dict)
     safe_revealed: bool = False
     shown_inventory_help: bool = False
+
+    @classmethod
+    def debug_state(cls, area):
+        """ Start in any area with every item, for manual testing. """
+        from data import AREAS
+        from enums import AreaKey
+
+        state = cls(current_position=area)
+        state.inventory = list(Item)
+        state.item_states[Item.WATERING_CAN] = ItemState.FULL
+        state.safe_revealed = True
+
+        # Remove items from the world so they can't be picked up again
+        for area_data in AREAS.values():
+            area_items = area_data.get(AreaKey.ITEMS, {})
+            for item in list(area_items):
+                if item in state.inventory:
+                    del area_items[item]
+        return state

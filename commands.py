@@ -1,3 +1,5 @@
+import subprocess
+
 from data import AREAS
 from enums import AreaKey, Command, ObjectKey, Status
 from interactions import (
@@ -6,8 +8,6 @@ from interactions import (
 from logger import log
 from utils import resolve_name
 from world import handle_movement, is_visible
-
-import subprocess
 
 
 def _cmd_take(state, command):

@@ -234,7 +234,7 @@ AREAS = {
     },
     Area.GARDEN: {
         AreaKey.DESCRIPTION: (
-            "A sunny garden with a small shed and a coiled hose.",
+            "A sunny garden with a small shed and a coiled hose."
             ),
         AreaKey.EXITS: {
             Path.NORTH: Area.KITCHEN,

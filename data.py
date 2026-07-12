@@ -40,10 +40,6 @@ ITEM_DESCRIPTIONS = {
         "▶ An abstract painting with bold reds, blues and greens. "
         "\n▶ The chaotic swirls of color are oddly mesmerizing."
     ),
-    Item.MAGIC_PLANT: (
-        "▶ A peculiar flowering plant in an ornate pot. \n▶ Its leaves shimmer"
-        " with an otherworldly quality, as if touched by starlight."
-    ),
 }
 
 # Per-object wrong item responses. Keys are interactable names.

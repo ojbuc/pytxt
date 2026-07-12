@@ -52,7 +52,6 @@ class Item(str, Enum):
     BONE =                      "bone"
     DOG_STATUE =                "dog statue"
     GARDEN_KEY =                "garden key"
-    MAGIC_PLANT =               "magic plant"
     SHOVEL =                    "shovel"
     SHED_KEY =                  "shed key"
     UNTITLED_47 =               "untitled #47"

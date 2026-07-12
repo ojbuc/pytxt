@@ -27,13 +27,17 @@ def _get_debug_state(raw_area):
 
     normalized = raw_area.strip().lower()
     area = next((a for a in Area if a.value == normalized), None)
+    state = GameState.debug_state(area)
 
     if area is None:
         valid = ", ".join(a.value for a in Area)
-        print(f"▶ [DEBUG] Unknown area '{raw_area}'. Valid options: {valid}\n")
+        log(
+                state, 
+                f"▶ [DEBUG] Unknown area '{raw_area}'. "
+                f"Valid options: {valid}\n"
+        )
         return None
 
-    state = GameState.debug_state(area)
     log(state, f"▶ [DEBUG] Starting in '{area.value}' with full inventory.\n")
     return state
 

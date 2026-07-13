@@ -1,13 +1,15 @@
 import subprocess
 
 from data import AREAS
-from enums import AreaKey, Command, ObjectKey, Status
+from enums import Area, AreaKey, Command, Item, Object, ObjectKey, Status
 from interactions import (
         handle_examine_command, handle_take_command, handle_use_command
 )
 from logger import log
 from utils import resolve_name
-from world import handle_movement, is_visible
+from world import (
+    handle_movement, is_visible, mark_used, set_visible, sync_granted_item
+)
 
 
 def _cmd_take(state, command):
@@ -87,6 +89,218 @@ def _cmd_examine(state, command):
     return state.current_position
 
 
+def _cmd_debug(state, command):
+    remainder = command[6:].strip() # Remove "debug "
+    if not remainder:
+        _debug_help(state)
+        return state.current_position
+
+    parts = remainder.split(maxsplit=1)
+    action = parts[0]
+    args = parts[1] if len(parts) > 1 else ""
+
+    handlers = {
+        "give":     _debug_give,
+        "add":      _debug_give,
+        "drop":     _debug_drop,
+        "goto":     _debug_goto,
+        "teleport": _debug_goto,
+        "reveal":   _debug_reveal,
+        "hide":     _debug_hide,
+        "use":      _debug_use,
+        "unuse":    _debug_unuse,
+        "state":    _debug_state,
+        "list":     _debug_list,
+    }
+
+    if action == "help":
+        _debug_help(state)
+        return state.current_position
+
+    handler = handlers.get(action)
+    if handler is None:
+        log(state, f"▶ [DEBUG] Unknown debug command '{action}'. "
+                    "Try 'debug help'.")
+        return state.current_position
+    return handler(state, args)
+
+
+def _debug_give(state, args):
+    if not args:
+        log(state, "▶ [DEBUG] Usage: debug give <item|all>")
+        return state.current_position
+
+    if args.strip().lower() == "all":
+        added = []
+        for item in list(Item):
+            if item not in state.inventory:
+                state.inventory.append(item)
+                sync_granted_item(state, item)
+                added.append(item.value)
+        if added:
+            log(state, f"▶ [DEBUG] Added: {', '.join(added)}")
+        else:
+            log(state, "▶ [DEBUG] You already have every item.")
+        return state.current_position
+
+    item, hint = resolve_name(args, list(Item))
+    if hint:
+        log(state, hint)
+    elif item:
+        if item in state.inventory:
+            log(state, f"▶ [DEBUG] You already have '{item.value}'.")
+        else:
+            state.inventory.append(item)
+            sync_granted_item(state, item)
+            log(state, f"▶ [Debug] Added '{item.value}' ti inventory.")
+    else:
+        log(state, f"▶ [DEBUG] No item matches '{args}'.")
+    return state.current_position
+
+
+def _debug_drop(state, args):
+    if not args:
+        log(state, "▶ [DEBUG] Usage: debuf drop <item>")
+        return state.current_position
+    item, hint = resolve_name(args, state.inventory)
+    if hint:
+        log(state, hint)
+    elif item:
+        state.inventory.remove(item)
+        name = item.value if hasattr(item, "value") else item
+        log(state, f"▶ [DEBUG] Removed '{name}' from inventory.")
+    else:
+        log(state, f"▶ [DEBUG] '{args}' is not in your inventory.")
+    return state.current_position
+
+
+def _debug_goto(state, args):
+    if not args:
+        log(state, "▶ [DEBUG] Usage: debug goto <area>")
+        return state.current_position
+    area, hint = resolve_name(args, list(Area))
+    if hint:
+        log(state, hint)
+        return state.current_position
+    if not area:
+        log(state, f"▶ [DEBUG] No area matches '{args}'.")
+        return state.current_position
+    log(state, f"▶ [DEBUG] Teleporting to '{area.value}'.")
+    return area
+
+
+def _debug_set_visibility(state, args, value):
+    if not args:
+        verb = "reveal" if value else "hide"
+        log(state, f"▶ [DEBUG] Usage: debug {verb} <object>")
+        return state.current_position
+    interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
+    obj_name, hint = resolve_name(args, list(interactables.keys()))
+    if hint:
+        log(state, hint)
+    elif obj_name:
+        set_visible(state, state.current_position, obj_name, value)
+        name = obj_name.value if hasattr(obj_name, "value") else obj_name
+        verb = "Revealed" if value else "Hid"
+        log(state, f"▶ [DEBUG] {verb} '{name}'.")
+    else:
+        log(state, f"▶ [DEBUG] No object matches '{args}' here.")
+    return state.current_position
+
+
+def _debug_reveal(state, args):
+    return _debug_set_visibility(state, args, True)
+
+
+def _debug_hide(state, args):
+    return _debug_set_visibility(state, args, False)
+
+
+def _debug_set_used(state, args, used):
+    if not args:
+        verb = "use" if used else "unuse"
+        log(state, f"▶ [DEBUG] Usage: debug {verb} <object>")
+        return state.current_position
+    interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
+    obj_name, hint = resolve_name(args, list(interactables.keys()))
+    if hint:
+        log(state, hint)
+        return state.current_position
+    if not obj_name:
+        log(state, f"▶ [DEBUG] No object matches '{args}' here.")
+        return state.current_position
+    name = obj_name.value if hasattr(obj_name, "value") else obj_name
+    if used:
+        mark_used(state, state.current_position, obj_name)
+        log(state, f"▶ [DEBUG] Marked '{name}' as used.")
+    else:
+        state.object_used.discard((state.current_position, obj_name))
+        log(state, f"▶ [DEBUG] Marked '{name}' as unused.")
+    return state.current_position
+
+
+def _debug_use(state, args):
+    return _debug_set_used(state, args, True)
+
+
+def _debug_unuse(state, args):
+    return _debug_set_used(state, args, False)
+
+
+def _debug_state(state, args):
+    parts = args.split()
+    if len(parts) < 2:
+        log(state, f"▶ [DEBUG] Usage: debug state <item> <state>")
+        return state.current_position
+    *item_parts, new_state = parts
+    item_query = " ".join(item_parts)
+    item, hint = resolve_name(item_query, list(Item))
+    if hint:
+        log(state, hint)
+        return state.current_position
+    if not item:
+        log(state, f"▶ [DEBUG] No item matches '{item_query}'.")
+        return state.current_position
+    state.item_states[item] = new_state
+    log(state, f"▶ [DEBUG] Set '{item.value}' state to '{new_state}'.")
+    return state.current_position
+
+
+def _debug_list(state, args):
+    target = args.strip().lower()
+    if target in ("item", "items"):
+        names = ", ".join(i.value for i in Item)
+        log(state, f"▶ [DEBUG] Items: {names}")
+    elif target in ("area", "areas"):
+        names = ", ".join(a.value for a in Area)
+        log(state, f"▶ [DEBUG] Areas: {names}")
+    elif target in ("object", "objects", "interactable", "interactables"):
+        interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
+        names = ", ".join(
+            (n.value if hasattr(n, "value") else n) for n in interactables
+        ) or "(none)"
+        log(state, f"▶ [DEBUG] Objects here: {names}")
+    else:
+        log(state, "▶ [DEBUG] Usage: debug list <items|areas|objects>")
+    return state.current_position
+
+
+def _debug_help(state):
+    log(state, "\n[DEBUG] Debug commands:")
+    log(state, "  debug give <item|all>             - Add item(s) to inventory")
+    log(
+            state, 
+            "  debug drop <item>                 - Remove item from inventory"
+    )
+    log(state, "  debug goto <area>                 - Teleport to an area")
+    log(state, "  debug reveal <object>              - Reveal object here")
+    log(state, "  debug hide <object>                - Hide object here")
+    log(state, "  debug use <object>                 - Mark object as used")
+    log(state, "  debug unuse <object>               - Mark object as unused")
+    log(state, "  debug state <item> <state>         - Set an item's state")
+    log(state, "  debug list <items|areas|objects>   - List valid names")
+
+
 COMMAND_DISPATCH = [
     (Command.EXAMINE, _cmd_examine),
     (Command.EX,      _cmd_examine),
@@ -133,7 +347,17 @@ def parse_direction_attempt(command):
 def process_command(state, command):
     state.new_log_lines = 0
 
-    # Try movement first
+    # Debug commands are handled first and only run in debug mode
+    if command == "debug" or command.startswith(Command.DEBUG):
+        if not state.debug_mode:
+            log(
+                    state,
+                    "▶ Invalid command, type 'help' for a list of commands."
+            )
+            return Status.CONTINUE
+        return _cmd_debug(state, command)
+
+    # Try movement
     direction = parse_movement_command(state, command)
     if direction:
         return handle_movement(state, direction)

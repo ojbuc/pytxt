@@ -97,3 +97,32 @@ def set_visible(state, area, obj_name, value):
 def reveal_interactable(state, area, interactable_name):
     if interactable_name in AREAS[area][ObjectKey.INTERACTABLES]:
         set_visible(state, area, interactable_name, True)
+
+
+def sync_granted_item(state, item):
+    """
+    Make the world consistent with 'item' being in inventory, for cases where
+    it was added outside the normal interaction flow (debug tooling or a 
+    fresh debug_state()):
+        - remove it from any area's pickup pool, so it can't be taken twice
+        - mark used any interactable that grants it, so 'use' can't re-grant
+        it and reveal whatever that interactable would have revealed
+    """
+    for area_name, area_data in AREAS.items():
+            area_items = area_data.get(AreaKey.ITEMS, {})
+            if item in area_items:
+                del area_items[item]
+
+            interactables = area_data.get(ObjectKey.INTERACTABLES, {})
+            for obj_name, obj in interactables.items():
+                granted = [
+                    obj.get(ObjectKey.GIVES_ITEM),
+                    obj.get(ObjectKey.ALSO_GIVES),
+                    obj.get(ObjectKey.BECOMES_ITEM),
+                ]
+                if item in granted:
+                    mark_used(state, area_name, obj_name) 
+                if ObjectKey.REVEALS in obj:
+                    reveal_interactable(
+                            state, area_name, obj[ObjectKey.REVEALS]
+                    )

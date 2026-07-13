@@ -35,6 +35,7 @@ class Color(str, Enum):
 
 
 class Command(str, Enum):
+    DEBUG =                     "debug "
     EX =                        "ex "
     EXAMINE =                   "examine "
     EXIT =                      "exit"

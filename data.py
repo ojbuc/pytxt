@@ -162,7 +162,7 @@ AREAS = {
             Object.FIREPLACE: {
                 ObjectKey.DESCRIPTION: (
                     "▶ A simple brick fireplace that keeps the place warm."
-                    ),
+                ),
                 ObjectKey.USED_DESCRIPTION: (
                     "▶ A fireplace with a button under the mantle.\n▶ You "
                     "can't help but feel that you should press it."
@@ -171,12 +171,12 @@ AREAS = {
                     "▶ A fireplace with burning ashes and a button under the "
                     "mantle.\n▶ The ashes inside are smoldering.\n▶ The button"
                     " has already been pressed."
-                    ),
+                ),
                 ObjectKey.POST_ASHES_DESCRIPTION: (
                     "▶ A fireplace with damp ashes and a button under the "
                     "mantle.\n▶ The ashes inside are extinguished.\n▶ The "
                     "button has already been pressed."
-                    ),
+                ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.INTERACTION_RESULT: (
                     "▶ The fireplace is too hot to search through safely, but "
@@ -192,7 +192,7 @@ AREAS = {
                 ObjectKey.USED_DESCRIPTION: (
                     "▶ You remember pressing this button and unlocking the "
                     "compartment beneath the ashes."
-                    ),
+                ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.INTERACTION_RESULT: (
                     "▶ You press it and hear a mechanical lock *click* "
@@ -231,7 +231,7 @@ AREAS = {
     Area.GARDEN: {
         AreaKey.DESCRIPTION: (
             "A sunny garden with a small shed and a coiled hose."
-            ),
+        ),
         AreaKey.EXITS: {
             Path.NORTH: Area.KITCHEN,
             Path.EAST: Area.SHED,
@@ -324,7 +324,7 @@ AREAS = {
                 ObjectKey.REQUIRES_ITEM: Item.SHOVEL,
                 ObjectKey.INTERACTION_RESULT: (
                     "▶ You need something to dig with."
-                    ),
+                ),
                 ObjectKey.SUCCESS_RESULT: (
                     "▶ You dig at the X mark with your shovel.\n▶ After a few "
                     "minutes of digging, your shovel hits something hard."

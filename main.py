@@ -12,11 +12,11 @@ from world import update_dynamic_visibility
 def _parse_args():
     parser = argparse.ArgumentParser(description="Text adventure game.")
     parser.add_argument(
-            "--start",
+            "--debug",
             metavar="AREA",
             help=(
-                "Start in a specific area with full inventory, for testing. "
-                f"Choices: {', '.join(a.value for a in Area)}"
+                "Start in a specific area with debug mode enabled, for testing."
+                f" Choices: {', '.join(a.value for a in Area)}"
             ),
     )
     return parser.parse_args()
@@ -28,21 +28,24 @@ def _get_debug_state(raw_area):
 
     normalized = raw_area.strip().lower()
     area = next((a for a in Area if a.value == normalized), None)
-    state = GameState.debug_state(area)
 
     if area is None:
         valid = ", ".join(a.value for a in Area)
         print(f"▶ [DEBUG] Unknown area '{raw_area}'. Valid options: {valid}\n")
         sys.exit(1)
 
-    log(state, f"▶ [DEBUG] Starting in '{area.value}' with full inventory.\n")
+    state = GameState.debug_state(area)
+    log(
+            state,
+            f"▶ [DEBUG] Starting in '{area.value}' with debug mode enabled.\n"
+    )
     return state
 
 
 def main():
     try:
         args = _parse_args()
-        state = _get_debug_state(args.start) or GameState()
+        state = _get_debug_state(args.debug) or GameState()
 
         while True:
             update_dynamic_visibility(state)

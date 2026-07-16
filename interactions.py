@@ -1,12 +1,12 @@
 from data import (
-        AREAS,
-        GENERIC_WRONG_ITEM_RESPONSE,
-        ITEM_DESCRIPTIONS,
-        WRONG_ITEM_RESPONSES
+    AREAS,
+    GENERIC_WRONG_ITEM_RESPONSE,
+    ITEM_DESCRIPTIONS,
+    WRONG_ITEM_RESPONSES,
 )
-from enums import AreaKey, Object, ObjectKey, Used
-from logger import log
-from utils import resolve_name
+from enums import AreaKey, Color, Object, ObjectKey, Used
+from logger import log, logc
+from utils import colorize, display_name, printc, resolve_name
 from world import is_used, is_visible, mark_used, reveal_interactable
 
 
@@ -18,42 +18,60 @@ def handle_examine_command(state, obj_name):
     # Check area interactables
     if obj_name in AREAS[state.current_position][ObjectKey.INTERACTABLES]:
         if is_visible(state, state.current_position, obj_name):
-            obj = (
-                AREAS[state.current_position][ObjectKey.INTERACTABLES][obj_name]
-                )
+            obj = AREAS[state.current_position][ObjectKey.INTERACTABLES][
+                obj_name
+            ]
             if obj_name == Object.FIREPLACE:
                 pos = state.current_position
                 if is_used(state, pos, Object.ASHES):
                     log(state, obj[ObjectKey.POST_ASHES_DESCRIPTION])
                 elif is_used(state, pos, Object.BUTTON):
                     log(state, obj[ObjectKey.POST_BUTTON_DESCRIPTION])
-                elif (is_used(state, pos, obj_name) 
-                      and ObjectKey.USED_DESCRIPTION in obj):
+                elif (
+                    is_used(state, pos, obj_name)
+                    and ObjectKey.USED_DESCRIPTION in obj
+                ):
                     log(state, obj[ObjectKey.USED_DESCRIPTION])
                 else:
                     log(state, obj[ObjectKey.DESCRIPTION])
-            elif (is_used(state, state.current_position, obj_name)
-                  and ObjectKey.USED_DESCRIPTION in obj):
+            elif (
+                is_used(state, state.current_position, Object.ASHES)
+                and ObjectKey.POST_ASHES_DESCRIPTION in obj
+            ):
+                log(state, obj[ObjectKey.POST_ASHES_DESCRIPTION])
+            elif (
+                is_used(state, state.current_position, obj_name)
+                and ObjectKey.USED_DESCRIPTION in obj
+            ):
                 log(state, obj[ObjectKey.USED_DESCRIPTION])
             else:
                 log(state, obj[ObjectKey.DESCRIPTION])
+
+            hidden_item = obj.get(ObjectKey.HIDDEN_DESCRIPTION_ITEM)
+            if hidden_item and hidden_item in state.inventory:
+                if prompt_examine_method(state, hidden_item):
+                    logc(
+                        state,
+                        obj[ObjectKey.HIDDEN_DESCRIPTION],
+                        Color.BRIGHT_MAGENTA,
+                    )
             return
-        log(state, "▶ There's no objects to examine here.")
+        logc(state, "▶ There's no objects to examine here.", Color.GREEN)
         return
     # Check area items
     if obj_name in AREAS[state.current_position][AreaKey.ITEMS]:
         log(state, AREAS[state.current_position][AreaKey.ITEMS][obj_name])
         return
-    log(state, "▶ There's no items to examine here.")
+    logc(state, "▶ There's no items to examine here.", Color.GREEN)
 
 
 def handle_use_command(state, obj_name, used_item=None):
     if obj_name not in AREAS[state.current_position][ObjectKey.INTERACTABLES]:
-        log(state, "▶ You can't use that here.")
+        logc(state, "▶ You can't use that here.", Color.GREEN)
         return
 
     if not is_visible(state, state.current_position, obj_name):
-        log(state, "▶ You don't see that here.")
+        logc(state, "▶ You don't see that here.", Color.GREEN)
         return
 
     obj = AREAS[state.current_position][ObjectKey.INTERACTABLES][obj_name]
@@ -66,13 +84,13 @@ def handle_use_command(state, obj_name, used_item=None):
     ):
         used_item = prompt_item_selection(state.inventory)
         if used_item is None:
-            log(state, "▶ Never mind.")
+            logc(state, "▶ Never mind.", Color.GREEN)
             return
     # Capture reveals before the interaction marks object as used
     reveals_target = (
-            obj.get(ObjectKey.REVEALS)
-            if not is_used(state, state.current_position, obj_name)
-            else None
+        obj.get(ObjectKey.REVEALS)
+        if not is_used(state, state.current_position, obj_name)
+        else None
     )
 
     output = interact_with_object(state, obj_name, used_item=used_item)
@@ -82,18 +100,44 @@ def handle_use_command(state, obj_name, used_item=None):
         reveal_interactable(state, state.current_position, reveals_target)
     # Handle reveals
     obj = AREAS[state.current_position][ObjectKey.INTERACTABLES].get(obj_name)
-    if (obj and ObjectKey.REVEALS in obj
-        and not is_used(state, state.current_position, obj_name)):
-        reveal_interactable(state, state.current_position, 
-                            obj[ObjectKey.REVEALS])
+    if (
+        obj
+        and ObjectKey.REVEALS in obj
+        and not is_used(state, state.current_position, obj_name)
+    ):
+        reveal_interactable(
+            state, state.current_position, obj[ObjectKey.REVEALS]
+        )
         mark_used(state, state.current_position, obj_name)
 
 
-def prompt_item_selection(inventory):
+def prompt_examine_method(state, item_name):
+    """
+    Ask the player whether to examine normally or with a special item
+    """
+    item_label = item_name.value if hasattr(item_name, "value") else item_name
+    eyes_label = (
+        f"{state.player_name}'s eyes" if state.player_name else "your own eyes"
+    )
+    printc(" Examine with what?", Color.GREEN)
+    printc(f" 1: {eyes_label}", Color.BRIGHT_YELLOW)
+    printc(f" 2: The {display_name(item_label)}", Color.BRIGHT_MAGENTA)
+
+    while True:
+        choice = input(colorize("▶ ", Color.GREEN)).strip().lower()
+        if choice in ("1", "eyes", ""):
+            return False
+        if choice in ("2", item_label):
+            return True
+        printc(" Invalid choice.", Color.GREEN)
+
+
+def prompt_item_selection(inventory, obj_name=None):
     if not inventory:
         return None
 
-    print("▶ Use what?")
+    target = f" with {display_name(obj_name)}" if obj_name else ""
+    printc(f" Use what{target}?", Color.GREEN)
     for i, item in enumerate(inventory, 1):
         print(f"  {i}: {item.value if hasattr(item, 'value') else item}")
     print("  0: cancel")
@@ -114,7 +158,7 @@ def prompt_item_selection(inventory):
             continue
         if resolved:
             return resolved
-        print("▶ Invalid choice.")
+        printc(f" There's no {target} here.", Color.GREEN)
 
 
 def interact_with_object(state, obj_name, used_item=None):
@@ -125,7 +169,7 @@ def interact_with_object(state, obj_name, used_item=None):
     # Handle objects with item requirements
     if ObjectKey.REQUIRES_ITEM in obj:
         result, success = handle_item_requirements(
-               state, obj, obj_name=obj_name, used_item=used_item
+            state, obj, obj_name=obj_name, used_item=used_item
         )
         effects = apply_interaction_effects(state, obj, obj_name, success)
         return result + effects
@@ -139,19 +183,17 @@ def interact_with_object(state, obj_name, used_item=None):
 
 
 USED_MESSAGES = {
-    Used.BUTTON:"▶ The button has already been pressed.",
-    Used.CARL:(
-            "▶ Carl is happily chewing his bone and gives you a contented wag."
+    Used.BUTTON: "▶ The button has already been pressed.",
+    Used.CARL: (
+        "▶ Carl is happily chewing his bone and gives you a contented wag."
     ),
-    Used.DRAWER:"▶ The drawer is empty.",
-    Used.FIREPLACE:(
-        "▶ You've already searched the fireplace."
-    ),
-    Used.PLANT:(
+    Used.DRAWER: "▶ The drawer is empty.",
+    Used.FIREPLACE: ("▶ You've already searched the fireplace."),
+    Used.PLANT: (
         "▶ The magic plant has grown into a magnificent beanstalk. \n"
         "▶ It doesn't need any more water."
     ),
-    Used.X_MARK:"▶ You've already dug here. There's just a hole in the ground.",
+    Used.X_MARK: "▶ You've already dug here. There's just a hole in the ground.",
 }
 
 
@@ -159,7 +201,7 @@ def get_used_message(obj_name):
     name = obj_name.lower()
     message = next(
         (msg for k, msg in USED_MESSAGES.items() if k in name),
-        "▶ You've already used this."
+        "▶ You've already used this.",
     )
     return message
 
@@ -184,13 +226,17 @@ def handle_item_requirements(state, obj, obj_name=None, used_item=None):
 
         if current_state != required_state:
             return (
-                obj.get(ObjectKey.FAILED_STATE_RESULT,
-                obj[ObjectKey.INTERACTION_RESULT]),
+                obj.get(
+                    ObjectKey.FAILED_STATE_RESULT,
+                    obj[ObjectKey.INTERACTION_RESULT],
+                ),
                 False,
             )
     # Item requirements met
-    return obj.get(ObjectKey.SUCCESS_RESULT, 
-                   obj[ObjectKey.INTERACTION_RESULT]), True
+    return (
+        obj.get(ObjectKey.SUCCESS_RESULT, obj[ObjectKey.INTERACTION_RESULT]),
+        True,
+    )
 
 
 def get_wrong_item_response(obj_name, used_item):
@@ -241,18 +287,22 @@ def _apply_item_grants(state, obj, obj_name, result_parts):
 
     if ObjectKey.GIVES_ITEM in obj:
         state.inventory.append(obj[ObjectKey.GIVES_ITEM])
-        result_parts.append("\n▶ (You now have: "
-                            f"{obj[ObjectKey.GIVES_ITEM].value})")
+        result_parts.append(
+            "\n▶ (You now have: "
+            f"{display_name(obj[ObjectKey.GIVES_ITEM].value)})"
+        )
 
     if ObjectKey.ALSO_GIVES in obj:
         state.inventory.append(obj[ObjectKey.ALSO_GIVES])
-        result_parts.append("\n▶ (You also found: "
-                            f"{obj[ObjectKey.ALSO_GIVES].value})")
+        result_parts.append(
+            "\n▶ (You also found: "
+            f"{display_name(obj[ObjectKey.ALSO_GIVES].value)})"
+        )
 
     if ObjectKey.BECOMES_ITEM in obj:
         state.inventory.append(obj[ObjectKey.BECOMES_ITEM])
-        result_parts.append("\n▶ (You now have: "
-                            f"{obj[ObjectKey.BECOMES_ITEM].value})")
+        result_parts.append("\n▶ (You now have: " f"{display_name(
+                                obj[ObjectKey.BECOMES_ITEM].value)})")
         if obj_name == Object.LOOSE_PAINTING:
             state.safe_revealed = True
 
@@ -275,13 +325,10 @@ def handle_take_command(state, item_name):
     key_match = next((k for k in area_items if k == item_name), None)
     if key_match is not None:
         state.inventory.append(key_match)
-        log(state,
-            "▶ You take the "
-            f"{key_match.value if hasattr(key_match, 'value') else key_match}."
-        )
+        log(state, f"▶ You take the {display_name(key_match)}.")
         del area_items[key_match]
     else:
-        log(state, "▶ You can't take that.")
+        logc(state, "▶ You can't take that.", Color.GREEN)
 
 
 def get_item_description(state, item_name):

@@ -1,6 +1,7 @@
 from data import AREAS
-from enums import Area, AreaKey, Item, Object, ObjectKey
-from logger import log
+from enums import Area, AreaKey, Color, Item, Object, ObjectKey
+from logger import log, logc
+from utils import colorize, display_name, print_narration, printc
 
 
 def update_dynamic_visibility(state):
@@ -9,8 +10,10 @@ def update_dynamic_visibility(state):
 
     if pos == Area.LIVING_ROOM and Item.SHED_KEY in inv:
         # Make ashes invisible when player has shed key
-        if all(k in AREAS[pos][ObjectKey.INTERACTABLES] for
-               k in (Object.ASHES, Object.BUTTON, Object.FIREPLACE)):
+        if all(
+            k in AREAS[pos][ObjectKey.INTERACTABLES]
+            for k in (Object.ASHES, Object.BUTTON, Object.FIREPLACE)
+        ):
             set_visible(state, pos, Object.ASHES, False)
 
     if pos == Area.YARD and Item.SHOVEL in inv:
@@ -23,25 +26,66 @@ def update_dynamic_visibility(state):
         if Object.CARL in AREAS[pos][ObjectKey.INTERACTABLES]:
             set_visible(state, pos, Object.CARL, False)
 
-    # Show magic plant in garden if safe has been revealed
-    # and player has untitled #47
-    if (pos == Area.GARDEN and state.safe_revealed
-            and Item.UNTITLED_47 in inv):
+    if pos == Area.GARDEN and state.safe_revealed and Item.UNTITLED_47 in inv:
+        # Show magic plant in garden if safe has been revealed
+        # and player has untitled #47
         if Object.MAGIC_PLANT in AREAS[pos][ObjectKey.INTERACTABLES]:
             set_visible(state, pos, Object.MAGIC_PLANT, True)
 
 
 def handle_movement(state, direction):
-    can_go, message = can_use_exit(state, state.current_position, 
-                                   direction, state.inventory)
-    if can_go:
-        next_area = AREAS[state.current_position][AreaKey.EXITS][direction]
-        log(state, f"▶ You go "
-                   f"{direction}: {next_area.value.replace('_', ' ')}")
-        return next_area
+    can_go, message = can_use_exit(
+        state, state.current_position, direction, state.inventory
+    )
+    if not can_go:
+        log(state, message)
+        return state.current_position
 
-    log(state, message)
-    return state.current_position
+    requirement = get_exit_requirement(state.current_position, direction)
+    if not _confirm_exit(state, requirement):
+        return state.current_position
+    next_area = AREAS[state.current_position][AreaKey.EXITS][direction]
+    log(
+        state,
+        f"▶ You go " f"{display_name(direction)}: {display_name(next_area)}",
+    )
+    return next_area
+
+
+def get_exit_requirement(area, direction):
+    return AREAS[area].get(AreaKey.EXIT_REQUIREMENTS, {}).get(direction, {})
+
+
+def _confirm_exit(state, requirement):
+    """
+    Some exits (like a one-way jump with no going back) need an explicit
+    y/n confirmation before the player commits. Exits with no CONFIRM_PROMPT
+    skip this entirely and proceed as normal.
+    """
+    raw_prompt = requirement.get(AreaKey.CONFIRM_PROMPT)
+    if not raw_prompt:
+        return True
+
+    print_narration(raw_prompt, state, color=Color.BRIGHT_CYAN)
+
+    question = colorize(
+        requirement.get(AreaKey.CONFIRM_QUESTION, "▶ Proceed? (y/n): "),
+        Color.GREEN,
+    )
+    while True:
+        choice = input(question).strip().lower()
+        if choice in ("y", "yes"):
+            return True
+        if choice in ("n", "no"):
+            logc(
+                state,
+                requirement.get(
+                    AreaKey.CONFIRM_DECLINE_MESSAGE, "▶ You decide against it."
+                ),
+                Color.GREEN,
+            )
+            return False
+        printc(" Invalid input, please enter y/n.", Color.GREEN)
 
 
 def can_use_exit(state, current_position, direction, inventory):
@@ -49,7 +93,7 @@ def can_use_exit(state, current_position, direction, inventory):
     if AreaKey.EXIT_REQUIREMENTS not in area:
         return True, None
 
-    required = area[AreaKey.EXIT_REQUIREMENTS].get(direction)
+    required = get_exit_requirement(current_position, direction)
     if not required:
         return True, None
 
@@ -84,8 +128,9 @@ def is_visible(state, area, obj_name):
     interactable = AREAS[area][ObjectKey.INTERACTABLES].get(obj_name)
     if not interactable:
         return False
-    if (ObjectKey.BECOMES_ITEM in interactable 
-        and is_used(state, area, obj_name)):
+    if ObjectKey.BECOMES_ITEM in interactable and is_used(
+        state, area, obj_name
+    ):
         return False
     return interactable and interactable.get(ObjectKey.VISIBLE, True)
 
@@ -102,27 +147,25 @@ def reveal_interactable(state, area, interactable_name):
 def sync_granted_item(state, item):
     """
     Make the world consistent with 'item' being in inventory, for cases where
-    it was added outside the normal interaction flow (debug tooling or a 
+    it was added outside the normal interaction flow (debug tooling or a
     fresh debug_state()):
         - remove it from any area's pickup pool, so it can't be taken twice
         - mark used any interactable that grants it, so 'use' can't re-grant
         it and reveal whatever that interactable would have revealed
     """
     for area_name, area_data in AREAS.items():
-            area_items = area_data.get(AreaKey.ITEMS, {})
-            if item in area_items:
-                del area_items[item]
+        area_items = area_data.get(AreaKey.ITEMS, {})
+        if item in area_items:
+            del area_items[item]
 
-            interactables = area_data.get(ObjectKey.INTERACTABLES, {})
-            for obj_name, obj in interactables.items():
-                granted = [
-                    obj.get(ObjectKey.GIVES_ITEM),
-                    obj.get(ObjectKey.ALSO_GIVES),
-                    obj.get(ObjectKey.BECOMES_ITEM),
-                ]
-                if item in granted:
-                    mark_used(state, area_name, obj_name) 
-                if ObjectKey.REVEALS in obj:
-                    reveal_interactable(
-                            state, area_name, obj[ObjectKey.REVEALS]
-                    )
+        interactables = area_data.get(ObjectKey.INTERACTABLES, {})
+        for obj_name, obj in interactables.items():
+            granted = [
+                obj.get(ObjectKey.GIVES_ITEM),
+                obj.get(ObjectKey.ALSO_GIVES),
+                obj.get(ObjectKey.BECOMES_ITEM),
+            ]
+            if item in granted:
+                mark_used(state, area_name, obj_name)
+            if ObjectKey.REVEALS in obj:
+                reveal_interactable(state, area_name, obj[ObjectKey.REVEALS])

@@ -1,14 +1,26 @@
 import subprocess
 
 from data import AREAS
-from enums import Area, AreaKey, Command, Item, Object, ObjectKey, Status
+from enums import Area, AreaKey, Color, Command, Item, ObjectKey, Status
 from interactions import (
-        handle_examine_command, handle_take_command, handle_use_command
+    handle_examine_command,
+    handle_take_command,
+    handle_use_command,
 )
-from logger import log
-from utils import resolve_name
+from logger import debug_log, log, logc
+from utils import (
+    colorize,
+    display_name,
+    flash_quit_message,
+    printc,
+    resolve_name,
+)
 from world import (
-    handle_movement, is_visible, mark_used, set_visible, sync_granted_item
+    handle_movement,
+    is_visible,
+    mark_used,
+    set_visible,
+    sync_granted_item,
 )
 
 
@@ -20,7 +32,7 @@ def _cmd_take(state, command):
         log(state, hint)
     elif obj_name:
         handle_take_command(state, obj_name)
-    else: # Check if it exists somewhere in the world
+    else:  # Check if it exists somewhere in the world
         if partial in _build_world_names(items_only=True):
             log(state, f"▶ There's no {partial} here.")
         else:
@@ -30,7 +42,8 @@ def _cmd_take(state, command):
 
 def _cmd_use(state, command):
     visible_interactables = [
-        name for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
+        name
+        for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
         if is_visible(state, state.current_position, name)
     ]
     remainder = command[4:]  # Remove "use "
@@ -56,9 +69,7 @@ def _cmd_use(state, command):
         handle_use_command(state, obj_name, used_item=used_item)
     else:
         if partial in _build_world_names(interactables_only=True):
-            log(state,
-                f"▶ You can't use the {partial} from here."
-            )
+            log(state, f"▶ You can't use the {partial} from here.")
         else:
             log(state, "▶ You can't use that.")
     return state.current_position
@@ -66,14 +77,14 @@ def _cmd_use(state, command):
 
 def _cmd_examine(state, command):
     visible_interactables = [
-        name for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
+        name
+        for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
         if is_visible(state, state.current_position, name)
     ]
     area_items = list(AREAS[state.current_position][AreaKey.ITEMS].keys())
     # Handle other commands
     partial = (
-            command[8:] if command.startswith(Command.EXAMINE)
-            else command[3:]
+        command[8:] if command.startswith(Command.EXAMINE) else command[3:]
     )
     candidates = visible_interactables + area_items + state.inventory
     obj_name, hint = resolve_name(partial, candidates)
@@ -90,7 +101,7 @@ def _cmd_examine(state, command):
 
 
 def _cmd_debug(state, command):
-    remainder = command[6:].strip() # Remove "debug "
+    remainder = command[6:].strip()  # Remove "debug "
     if not remainder:
         _debug_help(state)
         return state.current_position
@@ -100,17 +111,17 @@ def _cmd_debug(state, command):
     args = parts[1] if len(parts) > 1 else ""
 
     handlers = {
-        "give":     _debug_give,
-        "add":      _debug_give,
-        "drop":     _debug_drop,
-        "goto":     _debug_goto,
+        "give": _debug_give,
+        "add": _debug_give,
+        "drop": _debug_drop,
+        "goto": _debug_goto,
         "teleport": _debug_goto,
-        "reveal":   _debug_reveal,
-        "hide":     _debug_hide,
-        "use":      _debug_use,
-        "unuse":    _debug_unuse,
-        "state":    _debug_state,
-        "list":     _debug_list,
+        "reveal": _debug_reveal,
+        "hide": _debug_hide,
+        "use": _debug_use,
+        "unuse": _debug_unuse,
+        "state": _debug_state,
+        "list": _debug_list,
     }
 
     if action == "help":
@@ -119,15 +130,18 @@ def _cmd_debug(state, command):
 
     handler = handlers.get(action)
     if handler is None:
-        log(state, f"▶ [DEBUG] Unknown debug command '{action}'. "
-                    "Try 'debug help'.")
+        debug_log(
+            state,
+            f"▶ [DEBUG] Unknown debug command '{action}'. "
+            "Try 'debug help'.",
+        )
         return state.current_position
     return handler(state, args)
 
 
 def _debug_give(state, args):
     if not args:
-        log(state, "▶ [DEBUG] Usage: debug give <item|all>")
+        debug_log(state, "▶ [DEBUG] Usage: debug give <item|all>")
         return state.current_position
 
     if args.strip().lower() == "all":
@@ -138,9 +152,10 @@ def _debug_give(state, args):
                 sync_granted_item(state, item)
                 added.append(item.value)
         if added:
-            log(state, f"▶ [DEBUG] Added: {', '.join(added)}")
+            debug_log(state, f"▶ [DEBUG] Added: {', '.join(
+                          display_name(a) for a in added)}")
         else:
-            log(state, "▶ [DEBUG] You already have every item.")
+            debug_log(state, "▶ [DEBUG] You already have every item.")
         return state.current_position
 
     item, hint = resolve_name(args, list(Item))
@@ -148,19 +163,19 @@ def _debug_give(state, args):
         log(state, hint)
     elif item:
         if item in state.inventory:
-            log(state, f"▶ [DEBUG] You already have '{item.value}'.")
+            debug_log(state, f"▶ [DEBUG] You already have '{item.value}'.")
         else:
             state.inventory.append(item)
             sync_granted_item(state, item)
-            log(state, f"▶ [Debug] Added '{item.value}' ti inventory.")
+            debug_log(state, f"▶ [DEBUG] Added '{item.value}' to inventory.")
     else:
-        log(state, f"▶ [DEBUG] No item matches '{args}'.")
+        debug_log(state, f"▶ [DEBUG] No item matches '{args}'.")
     return state.current_position
 
 
 def _debug_drop(state, args):
     if not args:
-        log(state, "▶ [DEBUG] Usage: debuf drop <item>")
+        debug_log(state, "▶ [DEBUG] Usage: debug drop <item>")
         return state.current_position
     item, hint = resolve_name(args, state.inventory)
     if hint:
@@ -168,31 +183,31 @@ def _debug_drop(state, args):
     elif item:
         state.inventory.remove(item)
         name = item.value if hasattr(item, "value") else item
-        log(state, f"▶ [DEBUG] Removed '{name}' from inventory.")
+        debug_log(state, f"▶ [DEBUG] Removed '{name}' from inventory.")
     else:
-        log(state, f"▶ [DEBUG] '{args}' is not in your inventory.")
+        debug_log(state, f"▶ [DEBUG] '{args}' is not in your inventory.")
     return state.current_position
 
 
 def _debug_goto(state, args):
     if not args:
-        log(state, "▶ [DEBUG] Usage: debug goto <area>")
+        debug_log(state, "▶ [DEBUG] Usage: debug goto <area>")
         return state.current_position
     area, hint = resolve_name(args, list(Area))
     if hint:
         log(state, hint)
         return state.current_position
     if not area:
-        log(state, f"▶ [DEBUG] No area matches '{args}'.")
+        debug_log(state, f"▶ [DEBUG] No area matches '{args}'.")
         return state.current_position
-    log(state, f"▶ [DEBUG] Teleporting to '{area.value}'.")
+    debug_log(state, f"▶ [DEBUG] Teleporting to '{area.value}'.")
     return area
 
 
 def _debug_set_visibility(state, args, value):
     if not args:
         verb = "reveal" if value else "hide"
-        log(state, f"▶ [DEBUG] Usage: debug {verb} <object>")
+        debug_log(state, f"▶ [DEBUG] Usage: debug {verb} <object>")
         return state.current_position
     interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
     obj_name, hint = resolve_name(args, list(interactables.keys()))
@@ -202,9 +217,9 @@ def _debug_set_visibility(state, args, value):
         set_visible(state, state.current_position, obj_name, value)
         name = obj_name.value if hasattr(obj_name, "value") else obj_name
         verb = "Revealed" if value else "Hid"
-        log(state, f"▶ [DEBUG] {verb} '{name}'.")
+        debug_log(state, f"▶ [DEBUG] {verb} '{name}'.")
     else:
-        log(state, f"▶ [DEBUG] No object matches '{args}' here.")
+        debug_log(state, f"▶ [DEBUG] No object matches '{args}' here.")
     return state.current_position
 
 
@@ -219,7 +234,7 @@ def _debug_hide(state, args):
 def _debug_set_used(state, args, used):
     if not args:
         verb = "use" if used else "unuse"
-        log(state, f"▶ [DEBUG] Usage: debug {verb} <object>")
+        debug_log(state, f"▶ [DEBUG] Usage: debug {verb} <object>")
         return state.current_position
     interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
     obj_name, hint = resolve_name(args, list(interactables.keys()))
@@ -227,15 +242,15 @@ def _debug_set_used(state, args, used):
         log(state, hint)
         return state.current_position
     if not obj_name:
-        log(state, f"▶ [DEBUG] No object matches '{args}' here.")
+        debug_log(state, f"▶ [DEBUG] No object matches '{args}' here.")
         return state.current_position
     name = obj_name.value if hasattr(obj_name, "value") else obj_name
     if used:
         mark_used(state, state.current_position, obj_name)
-        log(state, f"▶ [DEBUG] Marked '{name}' as used.")
+        debug_log(state, f"▶ [DEBUG] Marked '{name}' as used.")
     else:
         state.object_used.discard((state.current_position, obj_name))
-        log(state, f"▶ [DEBUG] Marked '{name}' as unused.")
+        debug_log(state, f"▶ [DEBUG] Marked '{name}' as unused.")
     return state.current_position
 
 
@@ -250,7 +265,7 @@ def _debug_unuse(state, args):
 def _debug_state(state, args):
     parts = args.split()
     if len(parts) < 2:
-        log(state, f"▶ [DEBUG] Usage: debug state <item> <state>")
+        debug_log(state, f"▶ [DEBUG] Usage: debug state <item> <state>")
         return state.current_position
     *item_parts, new_state = parts
     item_query = " ".join(item_parts)
@@ -259,62 +274,61 @@ def _debug_state(state, args):
         log(state, hint)
         return state.current_position
     if not item:
-        log(state, f"▶ [DEBUG] No item matches '{item_query}'.")
+        debug_log(state, f"▶ [DEBUG] No item matches '{item_query}'.")
         return state.current_position
     state.item_states[item] = new_state
-    log(state, f"▶ [DEBUG] Set '{item.value}' state to '{new_state}'.")
+    debug_log(state, f"▶ [DEBUG] Set '{item.value}' state to '{new_state}'.")
     return state.current_position
 
 
 def _debug_list(state, args):
     target = args.strip().lower()
     if target in ("item", "items"):
-        names = ", ".join(i.value for i in Item)
-        log(state, f"▶ [DEBUG] Items: {names}")
+        names = ", ".join(display_name(i) for i in Item)
+        debug_log(state, f"▶ [DEBUG] Items: {names}")
     elif target in ("area", "areas"):
-        names = ", ".join(a.value for a in Area)
-        log(state, f"▶ [DEBUG] Areas: {names}")
+        names = ", ".join(display_name(a) for a in Area)
+        debug_log(state, f"▶ [DEBUG] Areas: {names}")
     elif target in ("object", "objects", "interactable", "interactables"):
         interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
-        names = ", ".join(
-            (n.value if hasattr(n, "value") else n) for n in interactables
-        ) or "(none)"
-        log(state, f"▶ [DEBUG] Objects here: {names}")
+        names = ", ".join(display_name(n) for n in interactables) or "(none)"
+        debug_log(state, f"▶ [DEBUG] Objects here: {names}")
     else:
-        log(state, "▶ [DEBUG] Usage: debug list <items|areas|objects>")
+        debug_log(state, "▶ [DEBUG] Usage: debug list <items|areas|objects>")
     return state.current_position
 
 
 def _debug_help(state):
-    log(state, "\n[DEBUG] Debug commands:")
-    log(state, "  debug give <item|all>             - Add item(s) to inventory")
-    log(
-            state, 
-            "  debug drop <item>                 - Remove item from inventory"
-    )
-    log(state, "  debug goto <area>                 - Teleport to an area")
-    log(state, "  debug reveal <object>              - Reveal object here")
-    log(state, "  debug hide <object>                - Hide object here")
-    log(state, "  debug use <object>                 - Mark object as used")
-    log(state, "  debug unuse <object>               - Mark object as unused")
-    log(state, "  debug state <item> <state>         - Set an item's state")
-    log(state, "  debug list <items|areas|objects>   - List valid names")
+    debug_log(state, "\n[DEBUG] Debug commands:")
+    debug_log(state, "  debug give <item|all>\t\t\t- Add item(s) to inventory")
+    debug_log(state, "  debug drop <item>\t\t\t- Remove item from inventory")
+    debug_log(state, "  debug goto <area>\t\t\t- Teleport to an area")
+    debug_log(state, "  debug reveal <object>\t\t\t- Reveal object here")
+    debug_log(state, "  debug hide <object>\t\t\t- Hide object here")
+    debug_log(state, "  debug use <object>\t\t\t- Mark object as used")
+    debug_log(state, "  debug unuse <object>\t\t\t- Mark object as unused")
+    debug_log(state, "  debug state <item> <state>\t\t- Set an item's state")
+    debug_log(state, "  debug list <items|areas|objects>\t- List valid names")
 
 
 COMMAND_DISPATCH = [
     (Command.EXAMINE, _cmd_examine),
-    (Command.EX,      _cmd_examine),
-    (Command.USE,     _cmd_use),
-    (Command.TAKE,    _cmd_take),
+    (Command.EX, _cmd_examine),
+    (Command.USE, _cmd_use),
+    (Command.TAKE, _cmd_take),
 ]
 
 DIRECTION_ALIASES = {
-    "n": "north", "s": "south", "e": "east",
-    "w": "west", "u": "up", "d": "down"
+    "n": "north",
+    "s": "south",
+    "e": "east",
+    "w": "west",
+    "u": "up",
+    "d": "down",
 }
 
-KNOWN_DIRECTIONS = (
-    set(DIRECTION_ALIASES.values()) | set(DIRECTION_ALIASES.keys())
+KNOWN_DIRECTIONS = set(DIRECTION_ALIASES.values()) | set(
+    DIRECTION_ALIASES.keys()
 )
 
 
@@ -323,10 +337,10 @@ def _build_world_names(items_only=False, interactables_only=False):
     for area in AREAS.values():
         if not interactables_only:
             for item in area.get(AreaKey.ITEMS, {}).keys():
-                names.add(item.value if hasattr(item, 'value') else item)
+                names.add(item.value if hasattr(item, "value") else item)
         if not items_only:
             for obj in area.get(ObjectKey.INTERACTABLES, {}).keys():
-                names.add(obj.value if hasattr(obj, 'value') else obj)
+                names.add(obj.value if hasattr(obj, "value") else obj)
     return names
 
 
@@ -351,8 +365,7 @@ def process_command(state, command):
     if command == "debug" or command.startswith(Command.DEBUG):
         if not state.debug_mode:
             log(
-                    state,
-                    "▶ Invalid command, type 'help' for a list of commands."
+                state, "▶ Invalid command, type 'help' for a list of commands."
             )
             return Status.CONTINUE
         return _cmd_debug(state, command)
@@ -361,7 +374,6 @@ def process_command(state, command):
     direction = parse_movement_command(state, command)
     if direction:
         return handle_movement(state, direction)
-
 
     result = None
     for prefix, handler in COMMAND_DISPATCH:
@@ -375,18 +387,17 @@ def process_command(state, command):
             show_history(state)
         elif command == Command.HELP:
             show_help(state)
-        elif command in (Command.QUIT, Command.EXIT):
+        elif command in (Command.ABANDON):
             if handle_quit_command(state):
                 return Status.QUIT
         else:
             direction_attempt = parse_direction_attempt(command)
             if direction_attempt:
-                log(state,
-                    f"▶ There's no exit {direction_attempt} from here."
-                )
+                log(state, f"▶ There's no exit {direction_attempt} from here.")
             else:
-                log(state,
-                    "▶ Invalid command, type 'help' for a list of commands."
+                log(
+                    state,
+                    "▶ Invalid command, type 'help' for a list of commands.",
                 )
     return result if result is not None else Status.CONTINUE
 
@@ -416,9 +427,7 @@ def parse_movement_command(state, command):
 
 def handle_inventory_command(state):
     if state.inventory:
-        items = ", ".join(
-            i.value if hasattr(i, "value") else i for i in state.inventory
-        )
+        items = ", ".join(display_name(i) for i in state.inventory)
         log(state, f"▶ You have: {items}")
         if not state.shown_inventory_help:
             log(state, "▶ (You can examine items in your inventory)")
@@ -429,43 +438,61 @@ def handle_inventory_command(state):
 
 def show_history(state):
     if not state.full_history:
-        print("▶ There is no history yet.")
-        input("▶ Press Enter to continue: ")
+        printc(" There is no history yet.", Color.BRIGHT_GREEN)
+        input(colorize(" Press Enter to continue: ", Color.BRIGHT_GREEN))
         return
     content = "\n".join(state.full_history)
     subprocess.run(
         ["less", "-R", "--prompt=History (q to quit, arrows to scroll)"],
         input=content,
-        text=True
+        text=True,
     )
 
 
 def show_help(state):
     log(state, "\nAvailable commands:")
-    log(state,
-        "  • go <direction/location> OR <direction/location> - Go somewhere"
+    log(
+        state,
+        "  • go <direction/location> OR <direction/location>\t- Go somewhere",
     )
-    log(state, "  • examine OR ex <item/object/etc> - Examine the surroundings")
-    log(state,
-    "  • use <object> - Use something"
+    log(
+        state,
+        "  • examine OR ex <item/object/etc>\t\t\t- Examine the surroundings",
     )
-    log(state, "  • use <item> on <object> - Use a specific item on an object")
-    log(state, "  • take <item> - Pick up an item and add it to your inventory")
-    log(state, "  • inventory OR inv - Show your inventory")
-    log(state, "  • history - View full command history")
-    log(state, "  • help - Show this help menu")
-    log(state, "  • quit OR exit - End the game (without saving progress)")
+    log(state, "  • use <object>\t\t\t\t\t- Use something")
+    log(
+        state,
+        "  • use <item> on <object>\t\t\t\t- Use a specific item on an object",
+    )
+    log(
+        state,
+        "  • take <item>\t\t\t\t\t\t- Pick up an item and add it to your "
+        "inventory",
+    )
+    log(state, "  • inventory OR inv\t\t\t\t\t- Show your inventory")
+    log(state, "  • history\t\t\t\t\t\t- View full command history")
+    log(state, "  • help\t\t\t\t\t\t- Show this help menu")
+    log(
+        state,
+        "  • abandon\t\t\t\t\t- End the game (without saving progress)",
+    )
 
 
 def handle_quit_command(state):
     while True:
         quit_confirm = (
-                input("▶ Would you like to quit? (y/n): ").strip().lower()
+            input(
+                colorize(
+                    " Would you like to quit? (y/n): ", Color.BRIGHT_GREEN
+                )
+            )
+            .strip()
+            .lower()
         )
-        if quit_confirm in ('y', 'yes'):
-            print("▶ Ending the adventure...\n")
-            return True
-        if quit_confirm in ('n', 'no'):
-            log(state, "▶ The adventure continues!\n")
+        if quit_confirm in ("y", "yes"):
+            flash_quit_message(" Ending the adventure!")
+            return Status.QUIT
+        if quit_confirm in ("n", "no"):
+            logc(state, "▶ The adventure continues!\n", Color.BRIGHT_GREEN)
             return False
-        print("▶ Invalid input, please enter y/n.")
+        printc(" Invalid input, please enter y/n.", Color.BRIGHT_GREEN)

@@ -375,21 +375,19 @@ def process_command(state, command):
     if direction:
         return handle_movement(state, direction)
 
-    result = None
     for prefix, handler in COMMAND_DISPATCH:
         if command.startswith(prefix):
-            result = handler(state, command)
-            break
-    else:
-        if command in (Command.INVENTORY, Command.INV):
-            handle_inventory_command(state)
-        elif command == Command.HISTORY:
-            show_history(state)
-        elif command == Command.HELP:
-            show_help(state)
-        elif command in (Command.ABANDON):
-            if handle_quit_command(state):
-                return Status.QUIT
+            return handler(state, command) or Status.CONTINUE 
+
+    if command in (Command.INVENTORY, Command.INV):
+        handle_inventory_command(state)
+    elif command == Command.HISTORY:
+        show_history(state)
+    elif command == Command.HELP:
+        show_help(state)
+    elif command in (Command.ABANDON):
+        if handle_quit_command(state):
+            return Status.QUIT
         else:
             direction_attempt = parse_direction_attempt(command)
             if direction_attempt:
@@ -399,7 +397,7 @@ def process_command(state, command):
                     state,
                     "▶ Invalid command, type 'help' for a list of commands.",
                 )
-    return result if result is not None else Status.CONTINUE
+    return Status.CONTINUE
 
 
 def parse_movement_command(state, command):
@@ -433,13 +431,13 @@ def handle_inventory_command(state):
             log(state, "▶ (You can examine items in your inventory)")
             state.shown_inventory_help = True
     else:
-        log(state, "▶ Your inventory is empty.")
+        logc(state, "▶ Your inventory is empty.", Color.GREEN)
 
 
 def show_history(state):
     if not state.full_history:
-        printc(" There is no history yet.", Color.BRIGHT_GREEN)
-        input(colorize(" Press Enter to continue: ", Color.BRIGHT_GREEN))
+        printc(" There is no history yet.", Color.GREEN)
+        input(colorize(" Press Enter to continue: ", Color.GREEN))
         return
     content = "\n".join(state.full_history)
     subprocess.run(
@@ -495,4 +493,4 @@ def handle_quit_command(state):
         if quit_confirm in ("n", "no"):
             logc(state, "▶ The adventure continues!\n", Color.BRIGHT_GREEN)
             return False
-        printc(" Invalid input, please enter y/n.", Color.BRIGHT_GREEN)
+        printc(" Invalid input, please enter y/n.", Color.GREEN)

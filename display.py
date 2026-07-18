@@ -39,9 +39,9 @@ def display_interactables(state, current_position):
     if both:
         printc(f"  You can examine and use: {', '.join(both)}", Color.YELLOW)
     if examine_only:
-        printc(f"  You can examine: {', '.join(examine_only)}", Color.YELLOW)
+        printc(f"  You can examine: {', '.join(examine_only)}", Color.MAGENTA)
     if use_only:
-        printc(f"  You can use: {', '.join(use_only)}", Color.YELLOW)
+        printc(f"  You can use: {', '.join(use_only)}", Color.WHITE)
 
 
 def display_area_information(state):
@@ -71,7 +71,7 @@ def display_area_information(state):
         AreaKey.EXIT_REQUIREMENTS, {}
     )
     if exits:
-        printc("  Exits:", Color.BRIGHT_MAGENTA)
+        printc("  Exits:", Color.BRIGHT_RED)
         for direction, destination in exits.items():
             requirement = exit_reqs.get(direction, {})
             if ObjectKey.CONDITION in requirement:

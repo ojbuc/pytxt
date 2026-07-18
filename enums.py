@@ -71,6 +71,7 @@ class Item(str, Enum):
     ANCHOR = "anchor"
     ATTIC_KEY = "attic key"
     BONE = "bone"
+    CHAIN_CUTTERS = "chain cutters"
     DOG_STATUE = "dog statue"
     GARDEN_KEY = "garden key"
     PAINTED_EYE = "painted eye"
@@ -95,8 +96,8 @@ class Object(str, Enum):
     FIREPLACE = "fireplace"
     GARDEN_HOSE = "garden hose"
     GRATER_MECHANISM = "grater mechanism"
-    KITCHEN_DRAWER = "kitchen drawer"
-    KITCHEN_FLOOR = "kitchen floor"
+    KITCHEN_DRAWER = "wooden drawer"
+    KITCHEN_FLOOR = "tile floor"
     LOOSE_PAINTING = "loose painting"  # Object.BECOMES_ITEM
     MAGIC_PLANT = "magic plant"
     PEDESTAL = "pedestal"

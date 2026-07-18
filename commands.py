@@ -377,7 +377,7 @@ def process_command(state, command):
 
     for prefix, handler in COMMAND_DISPATCH:
         if command.startswith(prefix):
-            return handler(state, command) or Status.CONTINUE 
+            return handler(state, command) or Status.CONTINUE
 
     if command in (Command.INVENTORY, Command.INV):
         handle_inventory_command(state)
@@ -448,31 +448,44 @@ def show_history(state):
 
 
 def show_help(state):
-    log(state, "\nAvailable commands:")
-    log(
+    logc(state, "\nAvailable commands:", Color.GREEN)
+    logc(
         state,
         "  • go <direction/location> OR <direction/location>\t- Go somewhere",
+        Color.GREEN,
     )
-    log(
+    logc(
         state,
         "  • examine OR ex <item/object/etc>\t\t\t- Examine the surroundings",
+        Color.GREEN,
     )
-    log(state, "  • use <object>\t\t\t\t\t- Use something")
-    log(
+    logc(state, "  • use <object>\t\t\t\t\t- Use something", Color.GREEN)
+    logc(
         state,
         "  • use <item> on <object>\t\t\t\t- Use a specific item on an object",
+        Color.GREEN,
     )
-    log(
+    logc(
         state,
         "  • take <item>\t\t\t\t\t\t- Pick up an item and add it to your "
         "inventory",
+        Color.GREEN,
     )
-    log(state, "  • inventory OR inv\t\t\t\t\t- Show your inventory")
-    log(state, "  • history\t\t\t\t\t\t- View full command history")
-    log(state, "  • help\t\t\t\t\t\t- Show this help menu")
-    log(
+    logc(
         state,
-        "  • abandon\t\t\t\t\t- End the game (without saving progress)",
+        "  • inventory OR inv\t\t\t\t\t- Show your inventory",
+        Color.GREEN,
+    )
+    logc(
+        state,
+        "  • history\t\t\t\t\t\t- View full command history",
+        Color.GREEN,
+    )
+    logc(state, "  • help\t\t\t\t\t\t- Show this help menu", Color.GREEN)
+    logc(
+        state,
+        "  • abandon\t\t\t\t\t\t- End the game (without saving progress)",
+        Color.GREEN,
     )
 
 

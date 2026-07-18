@@ -75,6 +75,11 @@ def handle_use_command(state, obj_name, used_item=None):
         return
 
     obj = AREAS[state.current_position][ObjectKey.INTERACTABLES][obj_name]
+
+    if not obj.get(ObjectKey.CAN_INTERACT, False):
+        logc(state, "▶ You can't use that.", Color.GREEN)
+        return
+
     # If the object accepts items and none was specified, prompt the player
     if (
         used_item is None
@@ -193,7 +198,9 @@ USED_MESSAGES = {
         "▶ The magic plant has grown into a magnificent beanstalk. \n"
         "▶ It doesn't need any more water."
     ),
-    Used.X_MARK: "▶ You've already dug here. There's just a hole in the ground.",
+    Used.X_MARK: (
+        "▶ You've already dug here. There's just a hole in the ground.",
+    ),
 }
 
 

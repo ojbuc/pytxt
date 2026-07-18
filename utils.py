@@ -31,7 +31,7 @@ def colorize(text, color):
 def substitute_player_name(text, state):
     """
     Replace the literal '{name}' placeholder in any flavor/description text
-    with the player's chosen name. Uses a plain string replace (not str.fromat)
+    with the player's chosen name. Uses a plain string replace (not str.format)
     so any other stray '{' or '}' in flavor text is left alone rather than
     raising a KeyError.
     """
@@ -56,17 +56,40 @@ def print_narration(text, state, color=None):
 def resolve_name(partial, candidates):
     str_candidates = [_get_val(c) for c in candidates]
     key_map = {_get_val(c): c for c in candidates}
+    partial = partial.strip().lower()
 
-    # Exact match first
+    if not partial:
+        return None, None
+
+    # Tier 0: exact full-string match
     if partial in str_candidates:
         return key_map[partial], None
 
-    # Substring matches
-    matches = [s for s in str_candidates if partial in s]
-    if len(matches) == 1:
-        return key_map[matches[0]], None
-    if len(matches) > 1:
-        return None, f"▶ Did you mean: {', '.join(matches)}?"
+    def _match(matches):
+        if len(matches) == 1:
+            return key_map[matches[0]], None
+        if len(matches) > 1:
+            titled_match = ", ".join(display_name(m) for m in matches)
+            return None, f"▶ Did you mean: {titled_match}?"
+        return None  # No matches at this tier, try the next one
+
+    # Tier 1: partial matches one whole word in the candidate
+    word_matches = [s for s in str_candidates if partial in s.split()]
+    result = _match(word_matches)
+    if result:
+        return result
+
+    # Tier 2: partial is a prefix of the candidate, or of one of its words
+    prefix_matches = [
+        s
+        for s in str_candidates
+        if s.startswith(partial)
+        or any(w.startswith(partial) for w in s.split())
+    ]
+    result = _match(prefix_matches)
+    if result:
+        return result
+
     # No match found
     return None, None
 

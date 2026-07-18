@@ -19,9 +19,17 @@ ITEM_DESCRIPTIONS = {
         "▶ A rusty iron Key that feels heavy in your hand. "
         "\n▶ It has the word 'SHED' etched into it."
     ),
+    Item.CHAIN_CUTTERS: (
+        "▶ In your hand, the Cutters sit heavier than they looked on the shelf"
+        ", jaws parted just enough to hint at a bite.\n▶ The hinge groans "
+        "stiff with rust, but it doesn't feel broken - just waiting, the same "
+        "as you are."
+    ),
     Item.SHOVEL: (
-        "▶ A sturdy steel Shovel with a wooden handle. "
-        "\n▶ Perfect for digging in dirt and uncovering buried secrets."
+        "▶ The handle is worn smooth in exactly the spot your palm falls, like"
+        " it was waiting for someone with your particular grip.\n▶ A thin "
+        "crust of old dirt still clings to the blade - whatever it last dug up"
+        ", it wasn't this."
     ),
     Item.ATTIC_KEY: (
         "▶ An ornate silver Key with scrollwork. "
@@ -136,35 +144,43 @@ AREAS = {
         ObjectKey.INTERACTABLES: {
             Object.KITCHEN_DRAWER: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ A wooden Drawer, you can see a shiny object"
-                    " reflecting light from within."
+                    "▶ A weathered wooden Drawer built into the counter, its "
+                    "brass handle tarnished with age.\n▶ It hangs slightly "
+                    "ajar, and something metallic within catches the light and"
+                    " throws it back at you."
                 ),
                 ObjectKey.USED_DESCRIPTION: (
-                    "▶ An open wooden Drawer, now empty."
+                    "▶ The wooden Drawer sits open and empty, its brass handle"
+                    " still slightly warm from your grip.\n▶ Dust motes drift "
+                    "lazily through the space where the Key used to gleam."
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.INTERACTION_RESULT: (
-                    "▶ You open the Drawer and find a Garden Key!"
+                    "▶ You slide the Drawer open with a soft wooden groan.\n▶ "
+                    "Nestled among old receipts and loose string, a Garden Key"
+                    " gleams back at you!"
                 ),
                 ObjectKey.GIVES_ITEM: Item.GARDEN_KEY,
             },
             Object.KITCHEN_FLOOR: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ The kitchen floor is a vast expanse of polished, bone-white"
-                    " ceramic tiles, laid out in a flawless grid.\n▶ Each tile "
-                    "gleams under the soft overhead lighting, so spotless it "
-                    "almost acts as a mirror to the polished chrome appliances.\n"
-                    "▶ The grout lines are a sharp, contrasting charcoal gray, "
-                    "perfectly straight and entirely free of dirt or wear."
+                    "▶ The kitchen floor is a vast expanse of polished, "
+                    "bone-white ceramic tiles, laid out in a flawless grid.\n▶"
+                    " Each tile gleams under the soft overhead lighting, so "
+                    "spotless it almost acts as a mirror to the polished "
+                    "chrome appliances.\n▶ The grout lines are a sharp, "
+                    "contrasting charcoal gray, perfectly straight and "
+                    "entirely free of dirt or wear."
                 ),
             },
             Object.REFRIGERATOR: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ Standing in the corner of the dim kitchen is the Chrono-"
-                    "Chill 3000.\n▶ Instead of the expected mechanical hum, it "
-                    "emits a slow, rhythmic tick-tock that vibrates through the "
-                    "floorboards.\n▶ it doesn't use coolant; it preserves its "
-                    "contents using a localized temporal statis field."
+                    "▶ Standing in the corner of the dim kitchen is the "
+                    "Chrono-Chill 3000.\n▶ Instead of the expected mechanical "
+                    "hum, it emits a slow, rhythmic tick-tock that vibrates "
+                    "through the floorboards.\n▶ it doesn't use coolant; it "
+                    "preserves its contents using a localized temporal "
+                    "statis field."
                 ),
             },
         },
@@ -179,28 +195,44 @@ AREAS = {
         AreaKey.EXIT_REQUIREMENTS: {
             Path.UP: {
                 AreaKey.ITEM: Item.ATTIC_KEY,
-                AreaKey.MESSAGE: "▶ The hatch to the Attic is locked tight.",
+                AreaKey.MESSAGE: (
+                    "▶ The hatch to the Attic sits flush in the ceiling, "
+                    "sealed by a lock that has no intention of hearing your "
+                    "case."
+                ),
             }
         },
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {
             Object.FIREPLACE: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ A simple brick Fireplace that keeps the place warm."
+                    "▶ A brick Fireplace crackles quietly, its flames dancing "
+                    "gold and amber against soot-blackened stone.\n▶ Warmth "
+                    "pours from the hearth in slow, steady waves and the "
+                    "mantle above bears the smooth wear of years spent close "
+                    "to the fire."
                 ),
                 ObjectKey.USED_DESCRIPTION: (
-                    "▶ A Fireplace with a button under the mantle.\n▶ You "
-                    "can't help but feel that you should press it."
+                    "▶ The Fireplace still crackles behind its brick facade, "
+                    "but now a small, worn button catches your eye, tucked "
+                    "just beneath the mantle.\n▶ Something about it pulls at "
+                    "you - you can't shake the feeling that you should press "
+                    "it."
                 ),
                 ObjectKey.POST_BUTTON_DESCRIPTION: (
-                    "▶ A Fireplace with burning Ashes and a Button under the "
-                    "mantle.\n▶ The Ashes inside are smoldering.\n▶ The Button"
-                    " has already been pressed."
+                    "▶ The Fireplace's flames have died down to a bed of "
+                    "smoldering Ashes, the Button beneath the mantle sitting "
+                    "still and spent.\n▶ Heat still radiates faintly from the "
+                    "coals and a thin curl of smoke drifts up where the fire "
+                    "once roared.\n▶ You've already pressed the Button - the "
+                    "mechanism has done its work."
                 ),
                 ObjectKey.POST_ASHES_DESCRIPTION: (
-                    "▶ A Fireplace with damp Ashes and a Button under the "
-                    "mantle.\n▶ The Ashes inside are extinguished.\n▶ The "
-                    "Button has already been pressed."
+                    "▶ The Fireplace stands cold now, its Ashes damp and gray "
+                    "where the Watering Can's water settled over them.\n▶ The "
+                    "Button beneath the mantle rests dark and still, its work "
+                    "long finished.\n▶ Only the faint, wet smell of "
+                    "extinguished embers lingers in te brick."
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.INTERACTION_RESULT: (
@@ -212,11 +244,18 @@ AREAS = {
             },
             Object.BUTTON: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ A small, worn button hidden under the Fireplace mantle."
+                    "▶ A small, worn button hidden under the Fireplace mantle,"
+                    " its brass surface dulled and pitted from years of heat."
+                    "\n▶ It sits flush with the stone, but a faint give "
+                    "beneath your fingertip tells you it still has one press "
+                    "left in it."
                 ),
                 ObjectKey.USED_DESCRIPTION: (
-                    "▶ You remember pressing this Button and unlocking the "
-                    "compartment beneath the Ashes."
+                    "▶ The button rests still and spent beneath the mantle, "
+                    "its spring long since given out.\n▶ You remember the "
+                    "mechanical *click* that answered from deep in the hearth"
+                    "when you pressed it, unlocking the compartment beneath "
+                    "the Ashes."
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.INTERACTION_RESULT: (
@@ -229,22 +268,29 @@ AREAS = {
             },
             Object.ASHES: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ Hot, smoldering ashes in the Fireplace. Do not touch!"
+                    "▶ Hot, smoldering ashes fill the base of the Fireplace, "
+                    "embers pulsing dull orange beneath a shifting layer of "
+                    "gray.\n▶ Heat rolls off them in visible waves - close "
+                    "enough to sift through, but not without paying for it."
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.REQUIRES_ITEM: Item.WATERING_CAN,
                 ObjectKey.REQUIRES_ITEM_STATE: ItemState.FULL,
                 ObjectKey.INTERACTION_RESULT: (
-                    "▶ The Ashes are too dangerous to search through safely."
+                    "▶ You reach toward the Ashes, but the heat pushes back "
+                    "before your fingers get close.\n▶ Whatever's buried in "
+                    "there will have to wait until it cools."
                 ),
                 ObjectKey.FAILED_STATE_RESULT: (
-                    "▶ The Watering Can is empty. "
-                    "\n▶ You need water to douse the Ashes."
+                    "▶ The Watering Can is empty and rattles uselessly in your"
+                    " hand.\n▶ You need water to douse the Ashes before you "
+                    "can search them safely."
                 ),
                 ObjectKey.SUCCESS_RESULT: (
-                    "▶ You douse the Ashes with water.\n▶ They cool down and "
-                    "you search through them safely, finding a hidden Shed "
-                    "Key!"
+                    "▶ You tip the Watering Can and a rush of water hisses "
+                    "against the coals, sending up a curtain of steam.\n▶ The "
+                    "Ashes collapse into a cool, sodden heap, and buried "
+                    "within them you find a hidden Shed Key!"
                 ),
                 ObjectKey.GIVES_ITEM: Item.SHED_KEY,
                 ObjectKey.CHANGES_ITEM_STATE: {
@@ -281,7 +327,11 @@ AREAS = {
         AreaKey.EXIT_REQUIREMENTS: {
             Path.EAST: {
                 AreaKey.ITEM: Item.SHED_KEY,
-                AreaKey.MESSAGE: "▶ The Shed is locked, you shall not pass!",
+                AreaKey.MESSAGE: (
+                    "▶ The Shed door holds fast behind a heavy padlock, "
+                    "entirely indifferent to your dramatic declarations "
+                    "of passage."
+                ),
             },
             Path.UP: {
                 ObjectKey.CONDITION: Object.WATERED_PLANT,
@@ -292,22 +342,28 @@ AREAS = {
         ObjectKey.INTERACTABLES: {
             Object.GARDEN_HOSE: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ A long green Garden Hose coiled neatly near a spigot. "
-                    "\n▶ The spigot is turned on and water drips from the hose"
-                    " nozzle."
+                    "▶ A long green Garden Hose lies coiled in loose rings "
+                    "beside a rusted brass spigot.\n▶ The valve sits half open"
+                    ", and a steady drip taps out a slow rhythm against the "
+                    "nozzle, catching the sunlight in small silver beads."
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.REQUIRES_ITEM: Item.WATERING_CAN,
                 ObjectKey.REQUIRES_ITEM_STATE: ItemState.EMPTY,
                 ObjectKey.INTERACTION_RESULT: (
-                    "▶ You need a container to fill up with water."
+                    "▶ Water taps steadily against the nozzle, but your hands "
+                    "alone can't hold it.\n▶ You'll need a container to catch "
+                    "what the Hose is offering."
                 ),
                 ObjectKey.FAILED_STATE_RESULT: (
-                    "▶ The Watering Can is already full."
+                    "▶ The Watering Can already sloshes with water, full to "
+                    "the brim.\n▶ There's no room left for more."
                 ),
                 ObjectKey.SUCCESS_RESULT: (
-                    "▶ You fill the Watering Can with water from the "
-                    "Garden Hose."
+                    "▶ You press the nozzle into the Watering Can and the "
+                    "Hose surges to life, filling it in a rush of cool water."
+                    "\n▶ Droplets spatter across your hands and the can grows "
+                    "pleasantly heavy in your grip."
                 ),
                 ObjectKey.CHANGES_ITEM_STATE: {
                     Item.WATERING_CAN: ItemState.FULL
@@ -323,10 +379,13 @@ AREAS = {
                 ObjectKey.REQUIRES_ITEM: Item.WATERING_CAN,
                 ObjectKey.REQUIRES_ITEM_STATE: ItemState.FULL,
                 ObjectKey.INTERACTION_RESULT: (
-                    "▶ The Plant doesn't look like it needs anything."
+                    "▶ The Plant's shimmering leaves droop slightly, unmoved "
+                    "by whatever you're holding - it isn't what it desires."
                 ),
                 ObjectKey.FAILED_STATE_RESULT: (
-                    "▶ The Watering Can is empty. The Plant looks thirsty."
+                    "▶ The Watering Can rattles empty in your hand while the "
+                    "Plant's leaves curl inward, still waiting for water it "
+                    "isn't getting."
                 ),
                 ObjectKey.SUCCESS_RESULT: (
                     "▶ You water the Magic Plant.\n▶ It glows brilliantly and "
@@ -344,9 +403,31 @@ AREAS = {
         },
     },
     Area.SHED: {
-        AreaKey.DESCRIPTION: "A Shed for storing various items.",
+        AreaKey.DESCRIPTION: (
+            "A cramped Shed, its walls lined with sagging shelves and the "
+            "mingled smell of motor oil and turned earth.\nHalf-used cans of "
+            "Civic Duty Semi-Gloss sit stacked in the corner, gathering the "
+            "kind of dust that means nobody's needed any of this - until now."
+            "\nEverything in here has been waiting for something. You get the "
+            "feeling it might be you."
+        ),
         AreaKey.EXITS: {Path.WEST: Area.GARDEN},
-        AreaKey.ITEMS: {Item.SHOVEL: "▶ A steel tool used for digging."},
+        AreaKey.ITEMS: {
+            Item.CHAIN_CUTTERS: (
+                "▶ A pair of Chain Cutters, heavy-handled and freckled with "
+                "rust, sits forgotten atop a stack of Civic Duty Semi-Gloss "
+                "paint cans.\n▶ They were built for exactly one purpose: to "
+                "open something that very badly wants to stay closed.\n▶ You "
+                "don't know what that is yet. The Cutters, for their part, "
+                "are in no hurry to tell you."
+            ),
+            Item.SHOVEL: (
+                "▶ A shovel leans against the wall, its steel head dulled by "
+                "years of quiet, unglamorous labor.\n▶ It has no opinion on "
+                "what's buried out there, or why you need to know so badly. It"
+                " just digs. That part - the *needing* - is entirely yours."
+            ),
+        },
         ObjectKey.INTERACTABLES: {},
     },
     Area.YARD: {
@@ -508,7 +589,7 @@ AREAS = {
                 AreaKey.CONFIRM_PROMPT: (
                     "The ground ends here - not a cliff, just a hole where "
                     "the world forgot to keep going.\nJump, and gravity "
-                    "remembers your name; you will fall through colors that "
+                    "forgets your name; you will fall through colors that "
                     "don't exist yet, unmade for one long breath before "
                     "the thing puts you back together on the other side."
                 ),
@@ -592,7 +673,7 @@ AREAS = {
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.REQUIRES_ITEM: Item.VIAL_OF_CORROSIVE_BILE,
                 ObjectKey.INTERACTION_RESULT: (
-                    "▶ {name} isn't strong enough to pry it loose.",
+                    "▶ {name} isn't strong enough to pry it loose."
                 ),
                 ObjectKey.SUCCESS_RESULT: (
                     "▶ {name} pours the contents of the Vial on top of the "

@@ -88,7 +88,7 @@ def main():
         flash_quit_message(
             " Whoops! Something went awfully wrong... ABORTING."
         )
-        printc(f" ({type(e).__name__}: {e})", Color.BRIGHT_RED)
+        printc(f" ({type(e).__name__}: {e})", Color.BRIGHT_GREEN)
 
 
 if __name__ == "__main__":

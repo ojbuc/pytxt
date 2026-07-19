@@ -71,7 +71,7 @@ def _cmd_use(state, command):
         if partial in _build_world_names(interactables_only=True):
             log(state, f"▶ You can't use the {partial} from here.")
         else:
-            log(state, "▶ You can't use that.")
+            logc(state, "▶ You can't use that.", Color.GREEN)
     return state.current_position
 
 
@@ -81,7 +81,9 @@ def _cmd_examine(state, command):
         for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
         if is_visible(state, state.current_position, name)
     ]
-    area_items = list(AREAS[state.current_position][AreaKey.ITEMS].keys())
+    area_items = list(
+        AREAS[state.current_position].get(AreaKey.ITEMS, {}).keys()
+    )
     # Handle other commands
     partial = (
         command[8:] if command.startswith(Command.EXAMINE) else command[3:]
@@ -94,9 +96,9 @@ def _cmd_examine(state, command):
         handle_examine_command(state, obj_name)
     else:
         if partial in _build_world_names():
-            log(state, f"▶ There's no {partial} here.")
+            logc(state, f"▶ There's no {partial} here.", Color.GREEN)
         else:
-            log(state, "▶ You can't examine that.")
+            logc(state, "▶ You can't examine that.", Color.BRIGHT_CYAN)
     return state.current_position
 
 
@@ -360,6 +362,7 @@ def parse_direction_attempt(command):
 
 def process_command(state, command):
     state.new_log_lines = 0
+    logc(state, f"> {command}", Color.BRIGHT_BLACK)
 
     # Debug commands are handled first and only run in debug mode
     if command == "debug" or command.startswith(Command.DEBUG):

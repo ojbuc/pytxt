@@ -4,7 +4,7 @@ from data import (
     ITEM_DESCRIPTIONS,
     WRONG_ITEM_RESPONSES,
 )
-from enums import AreaKey, Color, Object, ObjectKey, Used
+from enums import AreaKey, Color, Item, Object, ObjectKey, Used
 from logger import log, logc
 from utils import colorize, display_name, printc, resolve_name
 from world import is_used, is_visible, mark_used, reveal_interactable
@@ -21,6 +21,20 @@ def handle_examine_command(state, obj_name):
             obj = AREAS[state.current_position][ObjectKey.INTERACTABLES][
                 obj_name
             ]
+
+            hidden_item = obj.get(ObjectKey.HIDDEN_DESCRIPTION_ITEM)
+            examine_with_item = False
+            if hidden_item and hidden_item in state.inventory:
+                examine_with_item = prompt_examine_method(state, hidden_item)
+
+            if examine_with_item:
+                logc(
+                    state,
+                    obj[ObjectKey.HIDDEN_DESCRIPTION],
+                    Color.BRIGHT_MAGENTA,
+                )
+                return
+
             if obj_name == Object.FIREPLACE:
                 pos = state.current_position
                 if is_used(state, pos, Object.ASHES):
@@ -40,21 +54,18 @@ def handle_examine_command(state, obj_name):
             ):
                 log(state, obj[ObjectKey.POST_ASHES_DESCRIPTION])
             elif (
+                hidden_item
+                and hidden_item in state.inventory
+                and ObjectKey.POST_EYE_DESCRIPTION in obj
+            ):
+                log(state, obj[ObjectKey.POST_EYE_DESCRIPTION])
+            elif (
                 is_used(state, state.current_position, obj_name)
                 and ObjectKey.USED_DESCRIPTION in obj
             ):
                 log(state, obj[ObjectKey.USED_DESCRIPTION])
             else:
                 log(state, obj[ObjectKey.DESCRIPTION])
-
-            hidden_item = obj.get(ObjectKey.HIDDEN_DESCRIPTION_ITEM)
-            if hidden_item and hidden_item in state.inventory:
-                if prompt_examine_method(state, hidden_item):
-                    logc(
-                        state,
-                        obj[ObjectKey.HIDDEN_DESCRIPTION],
-                        Color.BRIGHT_MAGENTA,
-                    )
             return
         logc(state, "▶ There's no objects to examine here.", Color.GREEN)
         return
@@ -91,29 +102,19 @@ def handle_use_command(state, obj_name, used_item=None):
         if used_item is None:
             logc(state, "▶ Never mind.", Color.GREEN)
             return
-    # Capture reveals before the interaction marks object as used
-    reveals_target = (
-        obj.get(ObjectKey.REVEALS)
-        if not is_used(state, state.current_position, obj_name)
-        else None
-    )
 
+    was_used_before = is_used(state, state.current_position, obj_name)
     output = interact_with_object(state, obj_name, used_item=used_item)
     log(state, output)
 
-    if reveals_target:
-        reveal_interactable(state, state.current_position, reveals_target)
-    # Handle reveals
-    obj = AREAS[state.current_position][ObjectKey.INTERACTABLES].get(obj_name)
     if (
-        obj
-        and ObjectKey.REVEALS in obj
-        and not is_used(state, state.current_position, obj_name)
+        ObjectKey.REVEALS in obj
+        and not was_used_before
+        and is_used(state, state.current_position, obj_name)
     ):
         reveal_interactable(
             state, state.current_position, obj[ObjectKey.REVEALS]
         )
-        mark_used(state, state.current_position, obj_name)
 
 
 def prompt_examine_method(state, item_name):
@@ -260,7 +261,8 @@ def _mark_as_used(obj, obj_name, state):
         ObjectKey.GIVES_ITEM in obj
         or ObjectKey.ALSO_GIVES in obj
         or ObjectKey.BECOMES_ITEM in obj
-        or obj_name == Object.CARL
+        or ObjectKey.REVEALS in obj
+        or obj.get(ObjectKey.CONSUMES_ITEM, False)
         or ObjectKey.ENABLES_EXIT in obj
     ):
         mark_used(state, state.current_position, obj_name)
@@ -274,17 +276,13 @@ def _apply_state_changes(state, obj):
 
 
 def _apply_item_removals(obj, obj_name, inventory, result_parts):
-    consumed_objects = {
-        Object.CARL: "gave Carl the",
-        Object.PEDESTAL: "placed the",
-    }
-    if obj_name not in consumed_objects:
+    if not obj.get(ObjectKey.CONSUMES_ITEM, False):
         return
-    required_item = obj[ObjectKey.REQUIRES_ITEM]
+    required_item = obj.get(ObjectKey.REQUIRES_ITEM)
     if required_item and required_item in inventory:
         inventory.remove(required_item)
-        verb = consumed_objects[obj_name]
-        suffix = " on the pedestal" if obj_name == Object.PEDESTAL else ""
+        verb = obj.get(ObjectKey.CONSUME_MESSAGE, "used")
+        suffix = obj.get(ObjectKey.CONSUME_SUFFIX, "")
         result_parts.append(f"\n▶ (You {verb} {required_item.value}{suffix})")
 
 
@@ -327,7 +325,7 @@ def apply_interaction_effects(state, obj, obj_name, success):
 
 
 def handle_take_command(state, item_name):
-    area_items = AREAS[state.current_position][AreaKey.ITEMS]
+    area_items = AREAS[state.current_position].get(AreaKey.ITEMS, {})
     # Find the matching key (may be an Item enum)
     key_match = next((k for k in area_items if k == item_name), None)
     if key_match is not None:

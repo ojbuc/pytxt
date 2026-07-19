@@ -45,9 +45,10 @@ def handle_movement(state, direction):
     if not _confirm_exit(state, requirement):
         return state.current_position
     next_area = AREAS[state.current_position][AreaKey.EXITS][direction]
-    log(
+    logc(
         state,
         f"▶ You go " f"{display_name(direction)}: {display_name(next_area)}",
+        Color.BRIGHT_BLUE,
     )
     return next_area
 
@@ -88,6 +89,12 @@ def _confirm_exit(state, requirement):
         printc(" Invalid input, please enter y/n.", Color.GREEN)
 
 
+CONDITION_OBJECT_MAP = {
+    Object.WATERED_PLANT: Object.MAGIC_PLANT,
+    Object.STATUE_PLACED: Object.PEDESTAL,
+}
+
+
 def can_use_exit(state, current_position, direction, inventory):
     area = AREAS[current_position]
     if AreaKey.EXIT_REQUIREMENTS not in area:
@@ -103,13 +110,10 @@ def can_use_exit(state, current_position, direction, inventory):
 
     # Handle condition requirements (like watered plant)
     if ObjectKey.CONDITION in required:
-        if required[ObjectKey.CONDITION] == Object.WATERED_PLANT:
-            if not is_used(state, current_position, Object.MAGIC_PLANT):
-                return False, required[AreaKey.MESSAGE]
-
-        if required[ObjectKey.CONDITION] == Object.STATUE_PLACED:
-            if not is_used(state, current_position, Object.PEDESTAL):
-                return False, required[AreaKey.MESSAGE]
+        condition = required[ObjectKey.CONDITION]
+        check_object = CONDITION_OBJECT_MAP.get(condition, condition)
+        if not is_used(state, current_position, check_object):
+            return False, required[AreaKey.MESSAGE]
     return True, None
 
 

@@ -51,7 +51,7 @@ def display_area_information(state):
         printc("=" * 40, Color.BRIGHT_WHITE)
         for i, line in enumerate(state.action_log):
             if i >= len(state.action_log) - state.new_log_lines:
-                print(f"{Color.BRIGHT_YELLOW.value}{line}{Color.RESET.value}")
+                print(f"{Color.BOLD_CYAN.value}{line}{Color.RESET.value}")
             else:
                 print(line)
     printc("=" * 40, Color.BRIGHT_WHITE)
@@ -83,11 +83,9 @@ def display_area_information(state):
             printc(f"    ➜ {display_name(direction.value)} - " f"{display_name(
                 destination.value.replace('_', ' '))}", Color.BRIGHT_RED)
     # Show items
-    if AREAS[state.current_position][AreaKey.ITEMS]:
-        items = [
-            display_name(item)
-            for item in AREAS[state.current_position][AreaKey.ITEMS].keys()
-        ]
+    area_items = AREAS[state.current_position].get(AreaKey.ITEMS, {})
+    if area_items:
+        items = [display_name(item) for item in area_items.keys()]
         printc(f"  Items here: {', '.join(items)}", Color.BLUE)
     # Show interactables
     display_interactables(state, state.current_position)

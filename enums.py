@@ -37,6 +37,7 @@ class AreaKey(str, Enum):
 class Color(str, Enum):
     BLACK = "\033[30m"
     BLUE = "\033[34m"
+    BOLD = "\033[1m"
     CYAN = "\033[36m"
     GREEN = "\033[32m"
     MAGENTA = "\033[35m"
@@ -44,6 +45,7 @@ class Color(str, Enum):
     RESET = "\033[0m"
     YELLOW = "\033[33m"
     WHITE = "\033[37m"
+    BOLD_CYAN = "\033[1;36m"
     BRIGHT_BLACK = "\033[90m"
     BRIGHT_BLUE = "\033[94m"
     BRIGHT_CYAN = "\033[96m"
@@ -68,18 +70,19 @@ class Command(str, Enum):
 
 
 class Item(str, Enum):
-    ANCHOR = "anchor"
+    ANCHOR = "anchor" # Unused
     ATTIC_KEY = "attic key"
     BONE = "bone"
     CHAIN_CUTTERS = "chain cutters"
     DOG_STATUE = "dog statue"
+    EMPTY_VIAL = "empty vial"
     GARDEN_KEY = "garden key"
     PAINTED_EYE = "painted eye"
-    PIG_KEY = "pig key"
     SHOVEL = "shovel"
     SHED_KEY = "shed key"
+    SOME_FOOD = "some food" # Placeholder
     UNTITLED_47 = "untitled #47"
-    VIAL_OF_CORROSIVE_BILE = "vial of corrosive bile"
+    VIAL_OF_CORROSIVE_BILE = "vial of corrosive bile" # Unused
     WATERING_CAN = "watering can"
 
 
@@ -91,16 +94,22 @@ class ItemState(str, Enum):
 class Object(str, Enum):
     ASHES = "ashes"
     BUTTON = "button"
-    CARL = "carl"
+    CARL = "carl" # Object.CONSUMES_ITEM
+    CHAOS_CORE_UNLOCKED = "chaos_core_unlocked"
+    CRIMSON_RIFT_UNLOCKED = "crimson_rift_unlocked"
     ENTITY_FRAGMENT = "entity fragment"  # Object.BECOMES_ITEM
+    FEEDING_TROUGH = "feeding trough"
     FIREPLACE = "fireplace"
-    GARDEN_HOSE = "garden hose"
+    FRACTURED_ECHO_UNLOCKED = "fractured_echo_unlocked"
+    GARDEN_HOSE = "green hose"
     GRATER_MECHANISM = "grater mechanism"
+    GUTTER_MEAT = "gutter meat" # Object.CONSUMES_ITEM
     KITCHEN_DRAWER = "wooden drawer"
     KITCHEN_FLOOR = "tile floor"
     LOOSE_PAINTING = "loose painting"  # Object.BECOMES_ITEM
     MAGIC_PLANT = "magic plant"
     PEDESTAL = "pedestal"
+    PIGPEN_FLOOR = "muddy floor"
     REFRIGERATOR = "refrigerator"
     SAFE = "safe"
     SKELETAL_HAND = "skeletal hand"
@@ -118,6 +127,9 @@ class ObjectKey(str, Enum):
     CAN_INTERACT = "can_interact"
     CHANGES_ITEM_STATE = "changes_item_state"
     CONDITION = "condition"
+    CONSUMES_ITEM = "consumes_item"
+    CONSUME_MESSAGE = "consume_message"
+    CONSUME_SUFFIX = "consume_suffix"
     DESCRIPTION = "description"
     ENABLES_EXIT = "enables_exit"
     FAILED_STATE_RESULT = "failed_state_result"
@@ -127,10 +139,13 @@ class ObjectKey(str, Enum):
     INTERACTABLES = "interactables"
     INTERACTION_RESULT = "interaction_result"
     POST_ASHES_DESCRIPTION = "post_ashes_description"
+    POST_EYE_DESCRIPTION = "post_eye_description"
     POST_BUTTON_DESCRIPTION = "post_button_description"
     POST_X_MARK_DIG_DESCRIPTION = "post_x_mark_dig_description"
     REQUIRES_ITEM = "requires_item"
     REQUIRES_ITEM_STATE = "requires_item_state"
+    REQUIRES_OBJECT_USED = "requires_object_used"
+    REQUIRES_OBJECT_USED_MESSAGE = "requires_object_used_message"
     REVEALS = "reveals"
     SUCCESS_RESULT = "success_result"
     USED_DESCRIPTION = "used_description"

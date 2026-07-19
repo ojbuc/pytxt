@@ -2,25 +2,33 @@ from enums import Area, AreaKey, Item, ItemState, Object, ObjectKey, Path
 
 ITEM_DESCRIPTIONS = {
     Item.GARDEN_KEY: (
-        "▶ A small brass Key with intricate engravings. "
-        "\n▶ It looks like it might unlock a Garden door."
+        "▶ A small brass Key, its teeth cut with an engraver's stubborn "
+        "optimism - someone believed this shape would matter to somebody, "
+        "someday.\n▶ It doesn't ask what you'll unlock. Keys never do. They "
+        "just wait to become obsolete the moment they succeed."
     ),
     Item.WATERING_CAN: {
         "empty": (
-            "▶ A green metal Watering Can that's completely empty. "
-            "\n▶ You can hear it echo when you shake it."
+            "▶ A green metal Watering Can, hollow and entirely unashamed "
+            "about it. Shake it and the echo comes back sounding almost like "
+            "an apology.\n▶ Emptiness has its own kind of honesty - at least "
+            "it isn't pretending to be useful right now."
         ),
         "full": (
-            "▶ A green metal Watering Can, full of water. "
-            "\n▶ The water sloshes gently when you move it. Water is wet."
+            "▶ A green metal Watering Can, heavy now with intent. The water "
+            "inside sloshes with the quiet confidence of something that knows "
+            "exactly what it's for.\n▶ Water is wet. You knew that already. "
+            "Somehow it still felt worth confirming."
         ),
     },
     Item.SHED_KEY: (
-        "▶ A rusty iron Key that feels heavy in your hand. "
-        "\n▶ It has the word 'SHED' etched into it."
+        "▶ A rusty iron Key, heavier in the hand that its size has any right "
+        "to be - as if it's been carrying the weight of the word etched into "
+        "it.\n▶ SHED, it says, in case you'd forgotten what waits behind small"
+        ", locked things. You hadn't."
     ),
     Item.CHAIN_CUTTERS: (
-        "▶ In your hand, the Cutters sit heavier than they looked on the shelf"
+        "▶ In your hand, the Cutters sit heavier than they looked on the cans"
         ", jaws parted just enough to hint at a bite.\n▶ The hinge groans "
         "stiff with rust, but it doesn't feel broken - just waiting, the same "
         "as you are."
@@ -32,20 +40,28 @@ ITEM_DESCRIPTIONS = {
         ", it wasn't this."
     ),
     Item.ATTIC_KEY: (
-        "▶ An ornate silver Key with scrollwork. "
-        "\n▶ It looks like it belongs to something important."
+        "▶ An ornate silver Key, scrollwork curling across its bow like it's "
+        "trying to distract you from how cold the metal is.\n▶ Dug up from "
+        "dirt where someone thought it best forgotten. It looks important. "
+        "Things buried usually do."
     ),
     Item.BONE: (
-        "▶ A well-preserved Bone of unknown origin, ideally sized for a "
-        "friendly canine companion."
+        "▶ A well-preserved Bone, its provenance tactfully unexamined. "
+        "Someone, something, once needed this - now it's yours to give away."
+        "\n▶ It doesn't smell like victory or tragedy, just old marrow and the"
+        " faint promise of a wagging tail."
     ),
     Item.DOG_STATUE: (
-        "▶ A hand crafted miniature Statue, in the visage of Carl the Dog."
-        "\n▶ It appears to be made of moon rock, how does that work?"
+        "▶ A hand-crafted miniature Statue in the visage of Carl the Dog, "
+        "carved - impossibly - from something that catches the light like "
+        "moon rock.\n▶ It shouldn't exist. It does anyway. You get the sense "
+        "Carl finds this less strange than you do."
     ),
     Item.UNTITLED_47: (
-        "▶ An abstract painting with bold reds, blues and greens. "
-        "\n▶ The chaotic swirls of color are oddly mesmerizing."
+        "▶ An abstract painting, all bold reds, blues and greens flung "
+        "together with the kind of confidence that either means genius or "
+        "total indifference to the outcome.\n▶ It shouldn't exist. It does "
+        "anyway. You get the sense Carl finds this less strange than you do."
     ),
     Item.PAINTED_EYE: (
         "▶ A single Painted Eye, freshly cut from a canvas and still radiating"
@@ -54,15 +70,8 @@ ITEM_DESCRIPTIONS = {
     ),
 }
 
-# Per-object wrong item responses. Keys are interactable names.
-# Each entry can be a single string (used for all wrong items)
-# or a dict mapping specific item names to responses.
 # Falls back to GENERIC_WRONG_ITEM_RESPONSE if not defined here.
 WRONG_ITEM_RESPONSES = {
-    # Example of a flat response (same message regardless of item used):
-    # "garden hose": "▶ That doesn't seem to work with the hose.",
-    #
-    # Example of per-item responses:
     Object.ASHES: {
         Item.GARDEN_KEY: "▶ Throwing the Garden Key into hot ashes "
         "seems unwise.",
@@ -164,7 +173,7 @@ AREAS = {
             },
             Object.KITCHEN_FLOOR: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ The kitchen floor is a vast expanse of polished, "
+                    "▶ The Kitchen Floor is a vast expanse of polished, "
                     "bone-white ceramic tiles, laid out in a flawless grid.\n▶"
                     " Each tile gleams under the soft overhead lighting, so "
                     "spotless it almost acts as a mirror to the polished "
@@ -175,7 +184,7 @@ AREAS = {
             },
             Object.REFRIGERATOR: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ Standing in the corner of the dim kitchen is the "
+                    "▶ Standing in the corner of the dim Kitchen is the "
                     "Chrono-Chill 3000.\n▶ Instead of the expected mechanical "
                     "hum, it emits a slow, rhythmic tick-tock that vibrates "
                     "through the floorboards.\n▶ it doesn't use coolant; it "
@@ -254,7 +263,7 @@ AREAS = {
                     "▶ The button rests still and spent beneath the mantle, "
                     "its spring long since given out.\n▶ You remember the "
                     "mechanical *click* that answered from deep in the hearth"
-                    "when you pressed it, unlocking the compartment beneath "
+                    " when you pressed it, unlocking the compartment beneath "
                     "the Ashes."
                 ),
                 ObjectKey.CAN_INTERACT: True,
@@ -463,7 +472,7 @@ AREAS = {
             Object.CARL: {
                 ObjectKey.DESCRIPTION: (
                     "▶ A friendly golden retriever with bright, intelligent "
-                    "eyes wags his tail when he sees you."
+                    "eyes, he wags his tail rapidly when he sees you."
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.REQUIRES_ITEM: Item.BONE,
@@ -480,8 +489,10 @@ AREAS = {
                     " perfect spins and then drops into a play bow with his "
                     "tail wagging so hard his whole body wiggles.\n▶ 'WOOF "
                     "WOOF!' he barks happily, then settles down to contentedly"
-                    "chew his new treasure.\n▶ What a good boy!"
+                    " chews his new treasure.\n▶ What a good boy!"
                 ),
+                ObjectKey.CONSUMES_ITEM: True,
+                ObjectKey.CONSUME_MESSAGE: "gave Carl the",
             },
         },
     },
@@ -567,6 +578,9 @@ AREAS = {
                 ),
                 ObjectKey.ENABLES_EXIT: Path.PORTAL,
                 ObjectKey.VISIBLE: True,
+                ObjectKey.CONSUMES_ITEM: True,
+                ObjectKey.CONSUME_MESSAGE: "placed the",
+                ObjectKey.CONSUME_SUFFIX: " on the pedestal",
             },
         },
     },
@@ -601,6 +615,26 @@ AREAS = {
                     "▶ You take a breath and jump into The Void."
                 ),
             },
+            Path.NORTH: {
+                ObjectKey.CONDITION: Object.CHAOS_CORE_UNLOCKED,
+                AreaKey.MESSAGE: (
+                    "▶ The way North dissolves before you can take a step. "
+                    "Not yet."
+                ),
+            },
+            Path.EAST: {
+                ObjectKey.CONDITION: Object.FRACTURED_ECHO_UNLOCKED,
+                AreaKey.MESSAGE: (
+                    "▶ The East holds together for a moment, then unravels "
+                    "back into churn. Not yet."
+                ),
+            },
+            Path.WEST: {
+                ObjectKey.CONDITION: Object.CRIMSON_RIFT_UNLOCKED,
+                AreaKey.MESSAGE: (
+                    "▶ Something to the West refuses to let you near. Not yet."
+                ),
+            },
         },
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {
@@ -609,7 +643,7 @@ AREAS = {
     },
     Area.THE_VOID: {
         AreaKey.DESCRIPTION: ("As you fall, time stops in this moment."),
-        AreaKey.EXITS: {Path.SOUTH: Area.DEAD_ROOM},
+        AreaKey.EXITS: {Path.DOWN: Area.DEAD_ROOM},
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {},
     },
@@ -649,6 +683,13 @@ AREAS = {
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.VISIBLE: True,
+                ObjectKey.INTERACTION_RESULT: (
+                    "▶ The Grater Mechanism seals the mouth of the Well shut, "
+                    "its iron gears frozen in place by the calcified hand "
+                    "still jammed within them.\n▶ {name} can't force it - not"
+                    " by hand, not by will. Whatever holds those gears still "
+                    "has a grip."
+                ),
             },
             Object.GRATER_MECHANISM: {
                 ObjectKey.DESCRIPTION: (
@@ -663,12 +704,24 @@ AREAS = {
                 ),
                 ObjectKey.VISIBLE: False,
                 ObjectKey.CAN_INTERACT: True,
-                ObjectKey.INTERACTION_RESULT: "▶ ",
+                ObjectKey.INTERACTION_RESULT: (
+                    "▶ With the hand gone, the Grater's crank turns freely, "
+                    "grinding the last of the ash-crust away with a dry, "
+                    "metallic shriek.\n▶ The teeth beneath are bare now, "
+                    "hungry and clearly built to consume something more than "
+                    "air."
+                ),
             },
             Object.SKELETAL_HAND: {
                 ObjectKey.DESCRIPTION: (
                     "▶ A calcified, Skeletal Hand is jammed into the gears of "
                     "the Grater Mechanism that covers the Well Of Grief."
+                ),
+                ObjectKey.HIDDEN_DESCRIPTION_ITEM: Item.PAINTED_EYE,
+                ObjectKey.HIDDEN_DESCRIPTION: (
+                    "▶ Through the Painted Eye, the calcified knuckles seem to"
+                    ' refrain: "What warmth cannot melt, cold need not fight -'
+                    ' it need only remember what the body forgot: to rot."'
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.REQUIRES_ITEM: Item.VIAL_OF_CORROSIVE_BILE,
@@ -690,10 +743,109 @@ AREAS = {
                 ),
                 ObjectKey.REVEALS: Object.GRATER_MECHANISM,
             },
+            Object.WARPED_TABLE: {
+                ObjectKey.DESCRIPTION: (
+                    "▶ A low, Warped Table squats in the center of the room, "
+                    "its grain twisted like it tried to grow away from itself "
+                    "and only managed to buckle.\n▶ No warmth reaches this "
+                    "surface - no glow, no sheen, just the cold, flat color "
+                    "of something left in the dark long enough to forget it "
+                    "was ever a tree. A Painted Eye rests atop it, watching "
+                    "you back."
+                ),
+                ObjectKey.POST_EYE_DESCRIPTION: (
+                    "▶ A low, Warped Table squats in the center of the room, "
+                    "its grain twisted like it tried to grow away from itself "
+                    "and only managed to buckle.\n▶ No warmth reaches this "
+                    "surface - no glow, no sheen, just the cold, flat color "
+                    "of something left in the dark long enough to forget it "
+                    "was ever a tree. Whatever watched you from its surface is"
+                    " gone now."
+                ),
+                ObjectKey.HIDDEN_DESCRIPTION_ITEM: Item.PAINTED_EYE,
+                ObjectKey.HIDDEN_DESCRIPTION: (
+                    "▶ Through the Painted Eye, the table's warp isn't wood "
+                    "bending - it's wood remembering a shape it hasn't taken "
+                    "yet. Faint outlines flex accross the surface, almost like"
+                    " fingers, almost like a face, pressing outward from the "
+                    "inside of the grain."
+                ),
+            },
         },
     },
     Area.PIGPEN: {
         AreaKey.DESCRIPTION: ("TBD"),
+        AreaKey.EXITS: {
+            Path.NORTH: Area.WASTELAND,
+            Path.SOUTH: Area.DEAD_ROOM,
+        },
+        ObjectKey.INTERACTABLES: {
+            Object.FEEDING_TROUGH: {
+                ObjectKey.DESCRIPTION: (
+                    "▶ Collapsed against the cracked tile wall is the Feeding "
+                    "Trough.\n▶ Instead of the mechanical ticking of a "
+                    "temporal field, it emits a wet, rhythmic bubbling that "
+                    "vibrates through the mud underfoot.\n▶ It doesn't "
+                    "preserve its contents; it sits in a state of rapid, "
+                    "perpetual decay, liquefying whatever is thrown into its "
+                    "pulsing gelatinous sludge."
+                ),
+                ObjectKey.REQUIRES_ITEM: Item.SOME_FOOD,
+                ObjectKey.INTERACTION_RESULT: (
+                    "▶ You need something worth feeding it before it'll pay "
+                    "you any mind."
+                ),
+                ObjectKey.SUCCESS_RESULT: (
+                    "▶ You tip the food into the Trough. The sludge inside "
+                    "swallows it almost instantly, the Pig shuffles over, "
+                    "snuffling contentedly at the mess."
+                ),
+                ObjectKey.CONSUMES_ITEM: True,
+                ObjectKey.CONSUME_MESSAGE: "fed the",
+                ObjectKey.CONSUME_SUFFIX: " to the pig",
+            },
+            Object.GUTTER_MEAT: {
+                ObjectKey.DESCRIPTION: (
+                    "▶ Half-submerged in the muck, a pig watches you with damp"
+                    ", glassy eyes, grotesquely swollen along one flank.\n▶ "
+                    "loose strips of something meat-like hang off it, wet and "
+                    "translucent, twitching faintly even though nothing here "
+                    "has any business still moving.\n▶ It doesn't flinch when "
+                    "you get close. It just chews, slow and endless, on "
+                    "something that used to have a shape."
+                ),
+                ObjectKey.CAN_INTERACT: True,
+                ObjectKey.REQUIRES_OBJECT_USED: Object.FEEDING_TROUGH,
+                ObjectKey.REQUIRES_OBJECT_USED_MESSAGE: (
+                    "▶ The Pig backs away into the mud, still starving and "
+                    "unwilling to let anything near it."
+                ),
+                ObjectKey.REQUIRES_ITEM: Item.EMPTY_VIAL,
+                ObjectKey.INTERACTION_RESULT: (
+                    "▶ The Pig is fed and docile now, but you have nothing on "
+                    "hand to collect anything with."
+                ),
+                ObjectKey.SUCCESS_RESULT: (
+                    "▶ You press the Empty Vial against the weeping flank and "
+                    "it fills, thick and pale green, sealing itself shut the "
+                    "moment it's full.\n▶ The pig doesn't react at all."
+                ),
+                ObjectKey.GIVES_ITEM: Item.VIAL_OF_CORROSIVE_BILE,
+                ObjectKey.CONSUMES_ITEM: True,
+                ObjectKey.CONSUME_MESSAGE: "used the",
+                ObjectKey.CONSUME_SUFFIX: " on the pig",
+            },
+            Object.PIGPEN_FLOOR: {
+                ObjectKey.DESCRIPTION: (
+                    "▶ The Muddy Floor is a vast expanse of wet, black mud, "
+                    "shifting in a chaotic, uneven sludge.\n▶ Each patch pools"
+                    " under the dim, low-hanging light, so swallowed by filth "
+                    "it almost acts as a grave to the buried, contrasting "
+                    "bone-white, perfectly broken and entirely choked with "
+                    "rot and hair."
+                ),
+            },
+        },
     },
     Area.THE_INVERSE: {
         AreaKey.DESCRIPTION: ("TBD"),

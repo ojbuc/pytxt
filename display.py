@@ -93,9 +93,11 @@ def display_area_information(state):
 
 def get_area_description(state, area):
     if area == Area.LIVING_ROOM and is_used(state, area, Object.ASHES):
-        return AREAS[area][AreaKey.POST_ASHES_DESCRIPTION]
+        return AREAS[area][AreaKey.ASHES_EXTINGUISHED]
+    elif area == Area.GARDEN and Item.UNTITLED_47 in state.inventory:
+        return AREAS[area][AreaKey.PLANT_REVEALED]
     elif area == Area.YARD and Item.DOG_STATUE in state.inventory:
-        return "A ground of fertile green and earthy browns."
+        return AREAS[area][AreaKey.DOG_STATUE_TAKEN]
     else:
         description = AREAS[area][AreaKey.DESCRIPTION]
     return substitute_player_name(description, state)

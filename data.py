@@ -36,8 +36,8 @@ ITEM_DESCRIPTIONS = {
     Item.SHOVEL: (
         "▶ The handle is worn smooth in exactly the spot your palm falls, like"
         " it was waiting for someone with your particular grip.\n▶ A thin "
-        "crust of old dirt still clings to the blade - whatever it last dug up"
-        ", it wasn't this."
+        "crust of old dirt still clings to the blade, dried into whatever "
+        "shape the last dig left behind."
     ),
     Item.ATTIC_KEY: (
         "▶ An ornate silver Key, scrollwork curling across its bow like it's "
@@ -73,74 +73,152 @@ ITEM_DESCRIPTIONS = {
 # Falls back to GENERIC_WRONG_ITEM_RESPONSE if not defined here.
 WRONG_ITEM_RESPONSES = {
     Object.ASHES: {
-        Item.GARDEN_KEY: "▶ Throwing the Garden Key into hot ashes "
-        "seems unwise.",
+        Item.GARDEN_KEY: (
+            "▶ You hold the Garden Key over the Ashes and think better of "
+            "it.\n▶ Whatever it might unlock, it won't do so as a puddle of "
+            "molten brass."
+        ),
     },
     Object.CARL: {
-        Item.ATTIC_KEY: "▶ Carl doesn't want the Key, he gazes longingly at "
-        "the clouds.",
-        Item.GARDEN_KEY: "▶ Carl doesn't want the Key, he rejects the concept "
-        "of keys, unlocking and confinement.",
-        Item.SHED_KEY: "▶ Carl doesn't want the Key, he rejects the concept "
-        "of keys, unlocking and confinement.",
-        Item.SHOVEL: "▶ Digging into Carl would make quite a mess.\n▶ You feel"
-        " like this is a decision that you will regret.",
-        Item.WATERING_CAN: "▶ Carl doesn't want water, he feels no thirst, "
-        "only a deep hunger.",
+        Item.ATTIC_KEY: (
+            "▶ You offer Carl the Attic Key. He doesn't so much as glance at "
+            "it, gaze fixed on the clouds like they owe him something."
+        ),
+        Item.GARDEN_KEY: (
+            "▶ Carl regards the Key with the mild disdain of a creature who "
+            "has never once been locked out of anywhere.\n▶ Keys, locks, "
+            "confinement - none of it means anything to him."
+        ),
+        Item.SHED_KEY: (
+            "▶ Carl regards the Key with the mild disdain of a creature who "
+            "has never once been locked out of anywhere.\n▶ Keys, locks, "
+            "confinement - none of it means anything to him."
+        ),
+        Item.SHOVEL: (
+            "▶ You raise the Shovel toward Carl and stop yourself just in "
+            "time.\n▶ Some decisions can't be dug back out of."
+        ),
+        Item.WATERING_CAN: (
+            "▶ You tip the Can toward Carl, but thirst was never the "
+            "problem.\n▶ Whatever hunger sits behind those eyes, water won't "
+            "touch it."
+        ),
     },
     Object.GARDEN_HOSE: {
-        Item.ATTIC_KEY: "▶ The Garden hose isn't locked but the Attic is...",
-        Item.BONE: "▶ Wetting the Bone here has no effect.",
-        Item.GARDEN_KEY: "▶ The Garden Hose isn't locked, nice try though.",
-        Item.SHED_KEY: "▶ The Garden Hose isn't locked, you should use this "
-        "on the shed instead.",
-        Item.SHOVEL: "▶ Digging into the Garden Hose sounds like a bad idea, "
-        "it provides you with precious water after all.",
-        Item.UNTITLED_47: "▶ You resist the urge to damage this beautiful "
-        "artwork with water.",
+        Item.ATTIC_KEY: (
+            "▶ The Garden Hose isn't locked. The Attic, somewhere far above "
+            "you, very much is."
+        ),
+        Item.BONE: (
+            "▶ You hold the Bone under the Hose. It gets wet. Nothing about "
+            "it improves."
+        ),
+        Item.GARDEN_KEY: (
+            "▶ You try the Key against the Hose anyway. It has nothing "
+            "resembling a lock, and never did."
+        ),
+        Item.SHED_KEY: (
+            "▶ Wrong door. The Shed Key belongs to the Shed - try it there "
+            "instead."
+        ),
+        Item.SHOVEL: (
+            "▶ You raise the Shovel toward the Hose and reconsider - it's the "
+            "only thing standing between you and precious water."
+        ),
+        Item.UNTITLED_47: (
+            "▶ You bring the painting near the running water and something "
+            "in you rebels.\n▶ Some things weren't built to survive contact "
+            "with anything, least of all this."
+        ),
     },
     Object.MAGIC_PLANT: {
-        Item.ATTIC_KEY: "▶ You can't unlock a Plant with a Key.",
-        Item.BONE: "▶ An ancient magic force prevents you from striking the "
-        "Plant with your Bone.",
-        Item.GARDEN_KEY: "▶ You can't unlock a Plant with a Key.",
-        Item.SHED_KEY: "▶ You can't unlock a Plant with a Key.",
-        Item.SHOVEL: "▶ The plant suddenly summons forth a magical barrier, "
-        "shielding it from harm.\n▶ The Shovel can't dig it.",
-        Item.UNTITLED_47: "▶ The Plant glows faintly luminescent, it looks to "
-        "be reacting the presence of the painting.\n▶ "
-        "Perhaps the painting is important, you feel that you"
-        " should hold on to it.",
+        Item.ATTIC_KEY: (
+            "▶ You try the Key against the Plant's stem, aware even as you "
+            "do it that a plant has never once had a lock."
+        ),
+        Item.BONE: (
+            "▶ You swing the Bone at the Plant and it goes still in the "
+            "air, caught by some old, ancient magic that refuses to let the "
+            "blow land."
+        ),
+        Item.GARDEN_KEY: (
+            "▶ You try the Key against the Plant's stem, aware even as you "
+            "do it that a plant has never once had a lock."
+        ),
+        Item.SHED_KEY: (
+            "▶ You try the Key against the Plant's stem, aware even as you "
+            "do it that a plant has never once had a lock."
+        ),
+        Item.SHOVEL: (
+            "▶ The Plant flares to life the moment the Shovel bites toward "
+            "its roots, a shimmering barrier blooming out of nowhere to meet "
+            "the blade.\n▶ Whatever protects it, it isn't interested in "
+            "being dug up."
+        ),
+        Item.UNTITLED_47: (
+            "▶ The Plant catches sight of the painting and glows a soft, "
+            "startled luminescence, leaning toward it like something "
+            "recognized.\n▶ Whatever this reaction means, the painting feels "
+            "too important to let go of yet."
+        ),
     },
     Object.PEDESTAL: {
-        Item.ATTIC_KEY: "▶ There's no need to unlock the Pedestal, "
-        "it has no lock.",
-        Item.BONE: "▶ The Bone won't fit in the groove.",
-        Item.GARDEN_KEY: "▶ There's no need to unlock the Pedestal, "
-        "it has no lock.",
-        Item.SHED_KEY: "▶ There's no need to unlock the Pedestal, "
-        "it has no lock.",
-        Item.SHOVEL: "▶ You try to dig into the Pedestal, but you fail, it's "
-        "made of radiant gold and literally invincible, darn.",
-        Item.UNTITLED_47: "▶ The painting won't fit in the groove.",
+        Item.ATTIC_KEY: (
+            "▶ You look for a keyhole on the Pedestal and find only smooth, "
+            "unbroken gold. There was never anything here to unlock."
+        ),
+        Item.BONE: "▶ You press the Bone into the groove. It doesn't fit, "
+        "and never looks like it was going to.",
+        Item.GARDEN_KEY: (
+            "▶ You look for a keyhole on the Pedestal and find only smooth, "
+            "unbroken gold. There was never anything here to unlock."
+        ),
+        Item.SHED_KEY: (
+            "▶ You look for a keyhole on the Pedestal and find only smooth, "
+            "unbroken gold. There was never anything here to unlock."
+        ),
+        Item.SHOVEL: (
+            "▶ The Shovel skids uselessly off the Pedestal's surface, not "
+            "so much as scratching it.\n▶ Radiant gold, it turns out, "
+            "doesn't dig."
+        ),
+        Item.UNTITLED_47: (
+            "▶ You try to press the painting into the groove. Canvas was "
+            "never going to fit where something else was meant to sit."
+        ),
     },
     Object.X_MARK: {
-        Item.GARDEN_KEY: "▶ You can't unlock the ground with a Key, "
-        "it's just dirt.",
-        Item.SHED_KEY: "▶ You can't unlock the ground with a Key, "
-        "it's just dirt.",
-        Item.WATERING_CAN: "▶ There's no need to water the ground here.",
-        Item.UNTITLED_47: "▶ You shouldn't litter here.",
+        Item.GARDEN_KEY: (
+            "▶ You crouch and try the Key against the dirt anyway.\n▶ It's "
+            "just ground. Ground has never once had a lock."
+        ),
+        Item.SHED_KEY: (
+            "▶ You crouch and try the Key against the dirt anyway.\n▶ It's "
+            "just ground. Ground has never once had a lock."
+        ),
+        Item.WATERING_CAN: (
+            "▶ You tip the Can over the mark and nothing about the ground "
+            "asked to be watered."
+        ),
+        Item.UNTITLED_47: (
+            "▶ You hold the painting over the mark, considering leaving it "
+            "there, and think better of littering something this strange in "
+            "the dirt."
+        ),
     },
 }
 
-GENERIC_WRONG_ITEM_RESPONSE = "▶ That doesn't seem to do anything useful here."
+GENERIC_WRONG_ITEM_RESPONSE = (
+    "▶ Nothing happens - whatever you had in mind, this isn't the thing it "
+    "works on."
+)
 
 AREAS = {
     Area.KITCHEN: {
         AreaKey.DESCRIPTION: (
-            "A small, homely Kitchen with a Refrigerator in the corner and a "
-            "slightly open Drawer."
+            "A small Kitchen that used to feel homely. A Refrigerator ticks "
+            "quietly in the corner, and a Wooden Drawer sits slightly ajar, "
+            "its brass handle catching what little light finds its way in."
         ),
         AreaKey.EXITS: {Path.NORTH: Area.LIVING_ROOM, Path.SOUTH: Area.GARDEN},
         AreaKey.EXIT_REQUIREMENTS: {
@@ -187,7 +265,7 @@ AREAS = {
                     "▶ Standing in the corner of the dim Kitchen is the "
                     "Chrono-Chill 3000.\n▶ Instead of the expected mechanical "
                     "hum, it emits a slow, rhythmic tick-tock that vibrates "
-                    "through the floorboards.\n▶ it doesn't use coolant; it "
+                    "through the floorboards.\n▶ It doesn't use coolant; it "
                     "preserves its contents using a localized temporal "
                     "statis field."
                 ),
@@ -195,10 +273,15 @@ AREAS = {
         },
     },
     Area.LIVING_ROOM: {
-        AreaKey.DESCRIPTION: "A cozy Living Room with a Fireplace.",
-        AreaKey.POST_ASHES_DESCRIPTION: (
-            "The warmth of the Fireplace has faded, the Living Room is a bit "
-            "chilly now."
+        AreaKey.DESCRIPTION: (
+            "A Living Room that's trying hard to be cozy. A brick "
+            "Fireplace crackles in the corner, its glow spilling warm "
+            "across a low wooden table."
+        ),
+        AreaKey.ASHES_EXTINGUISHED: (
+            "The Fireplace has gone quiet, its warmth spent. Without it, "
+            "the Living Room feels a little colder, a little emptier than "
+            "before."
         ),
         AreaKey.EXITS: {Path.SOUTH: Area.KITCHEN, Path.UP: Area.ATTIC},
         AreaKey.EXIT_REQUIREMENTS: {
@@ -228,7 +311,7 @@ AREAS = {
                     "you - you can't shake the feeling that you should press "
                     "it."
                 ),
-                ObjectKey.POST_BUTTON_DESCRIPTION: (
+                ObjectKey.BUTTON_PRESSED: (
                     "▶ The Fireplace's flames have died down to a bed of "
                     "smoldering Ashes, the Button beneath the mantle sitting "
                     "still and spent.\n▶ Heat still radiates faintly from the "
@@ -236,12 +319,12 @@ AREAS = {
                     "once roared.\n▶ You've already pressed the Button - the "
                     "mechanism has done its work."
                 ),
-                ObjectKey.POST_ASHES_DESCRIPTION: (
+                ObjectKey.ASHES_EXTINGUISHED: (
                     "▶ The Fireplace stands cold now, its Ashes damp and gray "
                     "where the Watering Can's water settled over them.\n▶ The "
                     "Button beneath the mantle rests dark and still, its work "
                     "long finished.\n▶ Only the faint, wet smell of "
-                    "extinguished embers lingers in te brick."
+                    "extinguished embers lingers in the brick."
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.INTERACTION_RESULT: (
@@ -314,18 +397,26 @@ AREAS = {
                     "surface is polished to a soft, warm sheen that catches "
                     "the amber glow of the fireplace."
                 ),
-                ObjectKey.POST_ASHES_DESCRIPTION: (
+                ObjectKey.ASHES_EXTINGUISHED: (
                     "▶ The sturdy coffee table sits in the center of the "
                     "room, its dark oak surface now dull without the "
                     "Fireplace's glow.\n▶ A faint dusting of damp ash has "
-                    "settled accross it."
+                    "settled across it."
                 ),
             },
         },
     },
     Area.GARDEN: {
         AreaKey.DESCRIPTION: (
-            "A sunny Garden with a small Shed and a coiled Hose."
+            "A sunny Garden, hedges overgrown just enough to notice. A "
+            "weathered Shed sits shut at the far end, and a coiled Hose drips"
+            " a slow, steady rhythm beside the spigot."
+        ),
+        AreaKey.MAGIC_PLANT_REVEALED: (
+            "A sunny Garden, hedges overgrown just enough to notice. A "
+            "weathered Shed sits shut at the far end, and a coiled Hose drips"
+            " a slow rhythm beside a Plant that shimmers like it isn't quite "
+            "finished growing."
         ),
         AreaKey.EXITS: {
             Path.NORTH: Area.KITCHEN,
@@ -444,6 +535,9 @@ AREAS = {
             "A ground of fertile green and earthy browns. Carl the Dog roams "
             "here, outside the bounds of time and space."
         ),
+        AreaKey.DOG_STATUE_TAKEN: (
+            "A ground of fertile green and earthy browns."
+        ),
         AreaKey.EXITS: {Path.EAST: Area.GARDEN},
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {
@@ -453,7 +547,11 @@ AREAS = {
                     "clearly marked this spot for a reason.\n▶ The dirt looks "
                     "like it has been disturbed recently."
                 ),
-                ObjectKey.POST_X_MARK_DIG_DESCRIPTION: ("▶ "),
+                ObjectKey.X_MARK_DUG: (
+                    "▶ A shallow hole sits where the X used to be, a small "
+                    "metal box resting open and empty beside it.\n▶ Whatever "
+                    "this spot was hiding, it's already given it up."
+                ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.REQUIRES_ITEM: Item.SHOVEL,
                 ObjectKey.INTERACTION_RESULT: (
@@ -498,7 +596,16 @@ AREAS = {
     },
     Area.ATTIC: {
         AreaKey.DESCRIPTION: (
-            "A dusty Attic filled with old furniture and mysterious shadows."
+            "A dusty Attic, thick with the particular quiet of a room nobody "
+            "visits anymore. Old furniture huddles under drop cloths, and a "
+            "Painting hangs slightly askew on the far wall, as if something "
+            "behind it wants out."
+        ),
+        AreaKey.UNTITLED_47_TAKEN: (
+            "A dusty Attic, thick with the particular quiet of a room nobody "
+            "visits anymore. Old furniture huddles under drop cloths, and "
+            "where the Painting used to hang, a heavy metal safe sits bolted "
+            "into the wall, the number 47 etched plainly into its face."
         ),
         AreaKey.EXITS: {Path.DOWN: Area.LIVING_ROOM},
         AreaKey.ITEMS: {
@@ -580,7 +687,7 @@ AREAS = {
                 ObjectKey.VISIBLE: True,
                 ObjectKey.CONSUMES_ITEM: True,
                 ObjectKey.CONSUME_MESSAGE: "placed the",
-                ObjectKey.CONSUME_SUFFIX: " on the pedestal",
+                ObjectKey.CONSUME_SUFFIX: " on the Pedestal",
             },
         },
     },
@@ -589,7 +696,7 @@ AREAS = {
             "An endless expanse of churning nothing stretches in every "
             "direction.\nThe chaos doesn't rage... it simply is, vast and "
             "indifferent, older than the house, older than Carl, older than "
-            "the concept of Gardens, Sheds and Keys.\nWithin in it, a hidden "
+            "the concept of Gardens, Sheds and Keys.\nWithin it, a hidden "
             "entity watches you. It does not seem pleased."
         ),
         AreaKey.EXITS: {
@@ -642,16 +749,24 @@ AREAS = {
         },
     },
     Area.THE_VOID: {
-        AreaKey.DESCRIPTION: ("As you fall, time stops in this moment."),
+        AreaKey.DESCRIPTION: (
+            "Time doesn't pass here so much as it holds its breath. You fall "
+            "through nothing at all, and something in the dark seems to be "
+            "waiting to hear who you are before it lets go."
+        ),
         AreaKey.EXITS: {Path.DOWN: Area.DEAD_ROOM},
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {},
     },
     Area.DEAD_ROOM: {
-        AreaKey.DESCRIPTION: ("A decrepit Dead Room with a Well Of Grief."),
+        AreaKey.DESCRIPTION: (
+            "A decrepit Dead Room, the air gone thin and cold. Where warmth "
+            "should be, a Well Of Grief sinks into the floor, sealed shut by "
+            "a rusted iron mechanism that hasn't turned in a long, long time."
+        ),
         AreaKey.EXITS: {
             Path.NORTH: Area.PIGPEN,
-            Path.DOWN: Area.THE_INVERSE,
+            Path.DOWN: Area.BASEMENT_ALT,
         },
         AreaKey.EXIT_REQUIREMENTS: {
             Path.DOWN: {
@@ -753,7 +868,7 @@ AREAS = {
                     "was ever a tree. A Painted Eye rests atop it, watching "
                     "you back."
                 ),
-                ObjectKey.POST_EYE_DESCRIPTION: (
+                ObjectKey.PAINTED_EYE_TAKEN: (
                     "▶ A low, Warped Table squats in the center of the room, "
                     "its grain twisted like it tried to grow away from itself "
                     "and only managed to buckle.\n▶ No warmth reaches this "
@@ -774,7 +889,12 @@ AREAS = {
         },
     },
     Area.PIGPEN: {
-        AreaKey.DESCRIPTION: ("TBD"),
+        AreaKey.DESCRIPTION: (
+            "A filthy Pigpen, the air thick with rot and something wetter than"
+            " mud. A cracked Feeding Trough leans against the wall, and "
+            "somewhere in the muck, something that used to be a Pig watches "
+            "you back."
+        ),
         AreaKey.EXITS: {
             Path.NORTH: Area.WASTELAND,
             Path.SOUTH: Area.DEAD_ROOM,
@@ -802,11 +922,11 @@ AREAS = {
                 ),
                 ObjectKey.CONSUMES_ITEM: True,
                 ObjectKey.CONSUME_MESSAGE: "fed the",
-                ObjectKey.CONSUME_SUFFIX: " to the pig",
+                ObjectKey.CONSUME_SUFFIX: " to the Pig",
             },
             Object.GUTTER_MEAT: {
                 ObjectKey.DESCRIPTION: (
-                    "▶ Half-submerged in the muck, a pig watches you with damp"
+                    "▶ Half-submerged in the muck, a Pig watches you with damp"
                     ", glassy eyes, grotesquely swollen along one flank.\n▶ "
                     "loose strips of something meat-like hang off it, wet and "
                     "translucent, twitching faintly even though nothing here "
@@ -828,12 +948,12 @@ AREAS = {
                 ObjectKey.SUCCESS_RESULT: (
                     "▶ You press the Empty Vial against the weeping flank and "
                     "it fills, thick and pale green, sealing itself shut the "
-                    "moment it's full.\n▶ The pig doesn't react at all."
+                    "moment it's full.\n▶ The Pig doesn't react at all."
                 ),
                 ObjectKey.GIVES_ITEM: Item.VIAL_OF_CORROSIVE_BILE,
                 ObjectKey.CONSUMES_ITEM: True,
                 ObjectKey.CONSUME_MESSAGE: "used the",
-                ObjectKey.CONSUME_SUFFIX: " on the pig",
+                ObjectKey.CONSUME_SUFFIX: " on the Pig",
             },
             Object.PIGPEN_FLOOR: {
                 ObjectKey.DESCRIPTION: (
@@ -847,7 +967,8 @@ AREAS = {
             },
         },
     },
-    Area.THE_INVERSE: {
+    Area.WASTELAND: {},
+    Area.BASEMENT_ALT: {
         AreaKey.DESCRIPTION: ("TBD"),
     },
     Area.CHAOS_CORE: {

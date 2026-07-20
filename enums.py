@@ -3,6 +3,7 @@ from enum import Enum
 
 class Area(str, Enum):
     ATTIC = "attic"
+    BASEMENT_ALT = "basement"
     CHAOS_CORE = "chaos core"
     CHAOS_DIMENSION = "chaos dimension"
     FRACTURED_ECHO = "fractured echo"
@@ -15,23 +16,25 @@ class Area(str, Enum):
     PIGPEN = "pigpen"
     SHED = "shed"
     THE_VOID = "the void"
-    THE_INVERSE = "the inverse"
     WASTELAND = "wasteland"
     YARD = "yard"
 
 
 class AreaKey(str, Enum):
+    ASHES_EXTINGUISHED = "ashes_extinguished"
     CONFIRM_DECLINE_MESSAGE = "confirm_decline_message"
     CONFIRM_PROMPT = "confirm_prompt"
     CONFIRM_QUESTION = "confirm_question"
     CONFIRM_SUCCESS_MESSAGE = "confirm_success_message"
+    DOG_STATUE_TAKEN = "dog_statue_taken"
     DESCRIPTION = "description"
     EXIT_REQUIREMENTS = "exit_requirements"
     EXITS = "exits"
     ITEM = "item"
     ITEMS = "items"
+    MAGIC_PLANT_REVEALED = "magic_plant_revealed"
     MESSAGE = "message"
-    POST_ASHES_DESCRIPTION = "post_ashes_description"
+    UNTITLED_47_TAKEN = "untitled_47_taken"
 
 
 class Color(str, Enum):
@@ -70,7 +73,7 @@ class Command(str, Enum):
 
 
 class Item(str, Enum):
-    ANCHOR = "anchor" # Unused
+    ANCHOR = "anchor"  # Unused
     ATTIC_KEY = "attic key"
     BONE = "bone"
     CHAIN_CUTTERS = "chain cutters"
@@ -80,9 +83,9 @@ class Item(str, Enum):
     PAINTED_EYE = "painted eye"
     SHOVEL = "shovel"
     SHED_KEY = "shed key"
-    SOME_FOOD = "some food" # Placeholder
+    SOME_FOOD = "some food"  # Placeholder
     UNTITLED_47 = "untitled #47"
-    VIAL_OF_CORROSIVE_BILE = "vial of corrosive bile" # Unused
+    VIAL_OF_CORROSIVE_BILE = "vial of corrosive bile"  # Unused
     WATERING_CAN = "watering can"
 
 
@@ -94,7 +97,7 @@ class ItemState(str, Enum):
 class Object(str, Enum):
     ASHES = "ashes"
     BUTTON = "button"
-    CARL = "carl" # Object.CONSUMES_ITEM
+    CARL = "carl"  # Object.CONSUMES_ITEM
     CHAOS_CORE_UNLOCKED = "chaos_core_unlocked"
     CRIMSON_RIFT_UNLOCKED = "crimson_rift_unlocked"
     ENTITY_FRAGMENT = "entity fragment"  # Object.BECOMES_ITEM
@@ -103,7 +106,7 @@ class Object(str, Enum):
     FRACTURED_ECHO_UNLOCKED = "fractured_echo_unlocked"
     GARDEN_HOSE = "green hose"
     GRATER_MECHANISM = "grater mechanism"
-    GUTTER_MEAT = "gutter meat" # Object.CONSUMES_ITEM
+    GUTTER_MEAT = "gutter meat"  # Object.CONSUMES_ITEM
     KITCHEN_DRAWER = "wooden drawer"
     KITCHEN_FLOOR = "tile floor"
     LOOSE_PAINTING = "loose painting"  # Object.BECOMES_ITEM
@@ -123,7 +126,9 @@ class Object(str, Enum):
 
 class ObjectKey(str, Enum):
     ALSO_GIVES = "also_gives"
+    ASHES_EXTINGUISHED = "ashes_extinguished"
     BECOMES_ITEM = "becomes_item"
+    BUTTON_PRESSED = "button_pressed"
     CAN_INTERACT = "can_interact"
     CHANGES_ITEM_STATE = "changes_item_state"
     CONDITION = "condition"
@@ -138,10 +143,7 @@ class ObjectKey(str, Enum):
     HIDDEN_DESCRIPTION_ITEM = "hidden_description_item"
     INTERACTABLES = "interactables"
     INTERACTION_RESULT = "interaction_result"
-    POST_ASHES_DESCRIPTION = "post_ashes_description"
-    POST_EYE_DESCRIPTION = "post_eye_description"
-    POST_BUTTON_DESCRIPTION = "post_button_description"
-    POST_X_MARK_DIG_DESCRIPTION = "post_x_mark_dig_description"
+    PAINTED_EYE_TAKEN = "painted_eye_taken"
     REQUIRES_ITEM = "requires_item"
     REQUIRES_ITEM_STATE = "requires_item_state"
     REQUIRES_OBJECT_USED = "requires_object_used"
@@ -150,6 +152,7 @@ class ObjectKey(str, Enum):
     SUCCESS_RESULT = "success_result"
     USED_DESCRIPTION = "used_description"
     VISIBLE = "visible"
+    X_MARK_DUG = "x_mark_dug"
 
 
 class Path(str, Enum):

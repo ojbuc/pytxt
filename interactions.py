@@ -38,9 +38,9 @@ def handle_examine_command(state, obj_name):
             if obj_name == Object.FIREPLACE:
                 pos = state.current_position
                 if is_used(state, pos, Object.ASHES):
-                    log(state, obj[ObjectKey.POST_ASHES_DESCRIPTION])
+                    log(state, obj[ObjectKey.ASHES_EXTINGUISHED])
                 elif is_used(state, pos, Object.BUTTON):
-                    log(state, obj[ObjectKey.POST_BUTTON_DESCRIPTION])
+                    log(state, obj[ObjectKey.BUTTON_PRESSED])
                 elif (
                     is_used(state, pos, obj_name)
                     and ObjectKey.USED_DESCRIPTION in obj
@@ -50,15 +50,15 @@ def handle_examine_command(state, obj_name):
                     log(state, obj[ObjectKey.DESCRIPTION])
             elif (
                 is_used(state, state.current_position, Object.ASHES)
-                and ObjectKey.POST_ASHES_DESCRIPTION in obj
+                and ObjectKey.ASHES_EXTINGUISHED in obj
             ):
-                log(state, obj[ObjectKey.POST_ASHES_DESCRIPTION])
+                log(state, obj[ObjectKey.ASHES_EXTINGUISHED])
             elif (
                 hidden_item
                 and hidden_item in state.inventory
-                and ObjectKey.POST_EYE_DESCRIPTION in obj
+                and ObjectKey.PAINTED_EYE_TAKEN in obj
             ):
-                log(state, obj[ObjectKey.POST_EYE_DESCRIPTION])
+                log(state, obj[ObjectKey.PAINTED_EYE_TAKEN])
             elif (
                 is_used(state, state.current_position, obj_name)
                 and ObjectKey.USED_DESCRIPTION in obj
@@ -118,9 +118,6 @@ def handle_use_command(state, obj_name, used_item=None):
 
 
 def prompt_examine_method(state, item_name):
-    """
-    Ask the player whether to examine normally or with a special item
-    """
     item_label = item_name.value if hasattr(item_name, "value") else item_name
     eyes_label = (
         f"{state.player_name}'s eyes" if state.player_name else "your own eyes"

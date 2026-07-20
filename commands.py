@@ -429,9 +429,10 @@ def parse_movement_command(state, command):
 def handle_inventory_command(state):
     if state.inventory:
         items = ", ".join(display_name(i) for i in state.inventory)
-        log(state, f"▶ You have: {items}")
+        logc(state, f"▶ You have: {items}", Color.GREEN)
         if not state.shown_inventory_help:
-            log(state, "▶ (You can examine items in your inventory)")
+            logc(state, "▶ (You can examine items in your inventory)", 
+                        Color.GREEN)
             state.shown_inventory_help = True
     else:
         logc(state, "▶ Your inventory is empty.", Color.GREEN)

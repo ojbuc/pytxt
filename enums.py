@@ -85,7 +85,7 @@ class Item(str, Enum):
     SHED_KEY = "shed key"
     SOME_FOOD = "some food"  # Placeholder
     UNTITLED_47 = "untitled #47"
-    VIAL_OF_CORROSIVE_BILE = "vial of corrosive bile"  # Unused
+    VIAL_OF_CORROSIVE_BILE = "vial of corrosive bile"  # Placeholder
     WATERING_CAN = "watering can"
 
 
@@ -98,6 +98,7 @@ class Object(str, Enum):
     ASHES = "ashes"
     BUTTON = "button"
     CARL = "carl"  # Object.CONSUMES_ITEM
+    CHAINED_SHOVEL = "chained shovel" # Object.BECOMES_ITEM
     CHAOS_CORE_UNLOCKED = "chaos_core_unlocked"
     CRIMSON_RIFT_UNLOCKED = "crimson_rift_unlocked"
     ENTITY_FRAGMENT = "entity fragment"  # Object.BECOMES_ITEM

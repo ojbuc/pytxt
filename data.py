@@ -84,6 +84,11 @@ WRONG_ITEM_RESPONSES = {
             "▶ You offer Carl the Attic Key. He doesn't so much as glance at "
             "it, gaze fixed on the clouds like they owe him something."
         ),
+        Item.CHAIN_CUTTERS : (
+            "▶ You raise the Cutters toward Carl and he tilts his head, more "
+            "curious than concerned.\n▶ Whatever he's waiting on, it clearly "
+            "isn't this."
+        ),
         Item.GARDEN_KEY: (
             "▶ Carl regards the Key with the mild disdain of a creature who "
             "has never once been locked out of anywhere.\n▶ Keys, locks, "
@@ -104,6 +109,23 @@ WRONG_ITEM_RESPONSES = {
             "touch it."
         ),
     },
+    Object.CHAINED_SHOVEL: {
+        Item.GARDEN_KEY: (
+            "▶ You press the Key against the padlock out of habit more than "
+            "hope.\n▶ Wrong kind of stubborn. This Chain was never meant to be"
+            " unlocked, only cut."
+        ),
+        Item.SHED_KEY: (
+            "▶ You press the Key against the padlock out of habit more than "
+            "hope.\n▶ Wrong kind of stubborn. This Chain was never meant to be"
+            " unlocked, only cut."
+        ),
+        Item.WATERING_CAN: (
+            "▶ You pour water over the chain, half-expecting rust to solve "
+            "your problem for you.\n▶ It doesn't some things need force, not "
+            "patience."
+        ),
+    },
     Object.GARDEN_HOSE: {
         Item.ATTIC_KEY: (
             "▶ The Garden Hose isn't locked. The Attic, somewhere far above "
@@ -113,9 +135,14 @@ WRONG_ITEM_RESPONSES = {
             "▶ You hold the Bone under the Hose. It gets wet. Nothing about "
             "it improves."
         ),
+        Item.CHAIN_CUTTERS: (
+            "▶ The Cutters' jaws hover an inch from the rubber, then close on "
+            "nothing.\n▶ Cutting the Hose wouldn't open anything - it'd just "
+            "leave you standing in a puddle, out one working hose."
+        ),
         Item.GARDEN_KEY: (
-            "▶ You try the Key against the Hose anyway. It has nothing "
-            "resembling a lock, and never did."
+            "▶ You try the Key against the Hose. It has nothing "
+            "resembling a lock, never did, but you tried it anyway."
         ),
         Item.SHED_KEY: (
             "▶ Wrong door. The Shed Key belongs to the Shed - try it there "
@@ -140,6 +167,12 @@ WRONG_ITEM_RESPONSES = {
             "▶ You swing the Bone at the Plant and it goes still in the "
             "air, caught by some old, ancient magic that refuses to let the "
             "blow land."
+        ),
+        Item.CHAIN_CUTTERS : (
+            "▶ You test the Cutters' jaws against a stem, half-expecting the "
+            "same shimmering barrier that stopped the Shovel.\n▶ Nothing "
+            "happens - the Plant doesn't even seem to notice. Whatever it's "
+            "guarding against, blades were never the concern."
         ),
         Item.GARDEN_KEY: (
             "▶ You try the Key against the Plant's stem, aware even as you "
@@ -188,6 +221,11 @@ WRONG_ITEM_RESPONSES = {
         ),
     },
     Object.X_MARK: {
+        Item.CHAIN_CUTTERS : (
+            "▶ You crouch and snap the Cutters at the air above the X, as if "
+            "dirt might have a seam somewhere.\n▶ It doesn't. Whatever's "
+            "buried here isn't going to be reached by cutting anything."
+        ),
         Item.GARDEN_KEY: (
             "▶ You crouch and try the Key against the dirt anyway.\n▶ It's "
             "just ground. Ground has never once had a lock."
@@ -521,14 +559,31 @@ AREAS = {
                 "don't know what that is yet. The Cutters, for their part, "
                 "are in no hurry to tell you."
             ),
-            Item.SHOVEL: (
-                "▶ A shovel leans against the wall, its steel head dulled by "
-                "years of quiet, unglamorous labor.\n▶ It has no opinion on "
-                "what's buried out there, or why you need to know so badly. It"
-                " just digs. That part - the *needing* - is entirely yours."
-            ),
         },
-        ObjectKey.INTERACTABLES: {},
+        ObjectKey.INTERACTABLES: {
+            Object.CHAINED_SHOVEL: {
+                ObjectKey.DESCRIPTION: (
+                    "▶ A shovel leans against the wall, but it isn't going "
+                    "anywhere - a length of rusted chain loops through the "
+                    "handle and bites into a bracket on the wall.\n▶ Whoever "
+                    "left it here didn't want it walking off. Something sharp "
+                    "enough might convince the chain otherwise."
+                ),
+            ObjectKey.CAN_INTERACT: True,
+            ObjectKey.REQUIRES_ITEM: Item.CHAIN_CUTTERS,
+            ObjectKey.INTERACTION_RESULT: (
+                "▶ You tug at the chain. It doesn't budge, and neither does "
+                "the shovel.\n▶ You'd need something to cut through it."
+            ),
+            ObjectKey.SUCCESS_RESULT: (
+                "▶ The Cutters' jaws close on the rusted chain with a groan, "
+                "and it gives way in a shower of orange flakes.\n▶ The Shovel "
+                "clatters free, finally answering to someone again."
+            ),
+            ObjectKey.BECOMES_ITEM: Item.SHOVEL,
+            
+            },
+        },
     },
     Area.YARD: {
         AreaKey.DESCRIPTION: (

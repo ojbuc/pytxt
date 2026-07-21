@@ -53,6 +53,13 @@ def print_narration(text, state, color=None):
         print(f"  {line}")
 
 
+def resolve_description(state, data, states_key, default_key):
+    for condition, key in data.get(states_key, []):
+        if condition(state):
+            return data[key]
+    return data[default_key]
+
+
 def resolve_name(partial, candidates):
     str_candidates = [_get_val(c) for c in candidates]
     key_map = {_get_val(c): c for c in candidates}

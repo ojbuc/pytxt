@@ -28,12 +28,15 @@ class AreaKey(str, Enum):
     CONFIRM_SUCCESS_MESSAGE = "confirm_success_message"
     DOG_STATUE_TAKEN = "dog_statue_taken"
     DESCRIPTION = "description"
+    DESCRIPTION_STATES = "description_states"
     EXIT_REQUIREMENTS = "exit_requirements"
     EXITS = "exits"
     ITEM = "item"
     ITEMS = "items"
     MAGIC_PLANT_REVEALED = "magic_plant_revealed"
+    MAGIC_PLANT_WATERED = "magic_plant_watered"
     MESSAGE = "message"
+    SHED_UNLOCKED = "shed_unlocked"
     UNTITLED_47_TAKEN = "untitled_47_taken"
 
 
@@ -98,7 +101,7 @@ class Object(str, Enum):
     ASHES = "ashes"
     BUTTON = "button"
     CARL = "carl"  # Object.CONSUMES_ITEM
-    CHAINED_SHOVEL = "chained shovel" # Object.BECOMES_ITEM
+    CHAINED_SHOVEL = "chained shovel"  # Object.BECOMES_ITEM
     CHAOS_CORE_UNLOCKED = "chaos_core_unlocked"
     CRIMSON_RIFT_UNLOCKED = "crimson_rift_unlocked"
     ENTITY_FRAGMENT = "entity fragment"  # Object.BECOMES_ITEM
@@ -137,6 +140,7 @@ class ObjectKey(str, Enum):
     CONSUME_MESSAGE = "consume_message"
     CONSUME_SUFFIX = "consume_suffix"
     DESCRIPTION = "description"
+    DESCRIPTION_STATES = "description_states"
     ENABLES_EXIT = "enables_exit"
     FAILED_STATE_RESULT = "failed_state_result"
     GIVES_ITEM = "gives_item"

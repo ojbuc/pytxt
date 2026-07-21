@@ -18,6 +18,7 @@ class GameState:
     object_visible: dict = field(default_factory=dict)
     player_name: str = ""
     safe_revealed: bool = False
+    shed_unlocked: bool = False
     shown_inventory_help: bool = False
 
     @classmethod

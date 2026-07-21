@@ -8,6 +8,7 @@ from events import AREA_ENTRY_EVENTS
 from logger import debug_log
 from state import GameState
 from utils import colorize, flash_quit_message, printc
+from validate import log_self_check, run_self_check
 from world import update_dynamic_visibility
 
 
@@ -19,6 +20,14 @@ def _parse_args():
         help=(
             "Start in a specific area with debug mode enabled, for testing."
             f" Choices: {', '.join(a.value for a in Area)}"
+        ),
+    )
+    parser.add_argument(
+        "--check-data",
+        action="store_true",
+        help=(
+            "Validate AREAS for broken references (bad exits, dangling "
+            "REVEALS/ENABLES_EXIT/Item keys, etc.) and exit without playing."
         ),
     )
     return parser.parse_args()
@@ -51,7 +60,14 @@ def main():
     state = None
     try:
         args = _parse_args()
+
+        if args.check_data:
+            sys.exit(0 if run_self_check() else 1)
+
         state = _get_debug_state(args.debug) or GameState()
+
+        if state.debug_mode:
+            log_self_check(state)
 
         while True:
             update_dynamic_visibility(state)

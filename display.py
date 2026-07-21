@@ -2,12 +2,16 @@ import subprocess
 
 from data import AREAS
 from enums import Area, AreaKey, Color, Item, Object, ObjectKey
-from utils import colorize, display_name, printc, substitute_player_name
+from utils import (
+    colorize, display_name, printc, resolve_description, substitute_player_name
+)
 from world import can_use_exit, is_used, is_visible
 
 
 def display_interactables(state, current_position):
-    if ObjectKey.INTERACTABLES not in AREAS[current_position]:
+    interactables = AREAS[current_position].get(ObjectKey.INTERACTABLES, {})
+
+    if not interactables:
         return
 
     visible_interactables = [
@@ -18,7 +22,7 @@ def display_interactables(state, current_position):
 
     if not visible_interactables:
         return
-    # Categorize objects by available actions
+
     examine_only = []
     use_only = []
     both = []
@@ -46,6 +50,7 @@ def display_interactables(state, current_position):
 
 def display_area_information(state):
     clear_screen()
+
     # Show action log
     if state.action_log:
         printc("=" * 40, Color.BRIGHT_WHITE)
@@ -65,8 +70,9 @@ def display_area_information(state):
     )
     for line in description.split("\n"):
         print(f"  {line}")
+
     # Show exits
-    exits = AREAS[state.current_position][AreaKey.EXITS]
+    exits = AREAS[state.current_position].get(AreaKey.EXITS, {})
     exit_reqs = AREAS[state.current_position].get(
         AreaKey.EXIT_REQUIREMENTS, {}
     )
@@ -82,24 +88,21 @@ def display_area_information(state):
                     continue
             printc(f"    ➜ {display_name(direction.value)} - " f"{display_name(
                 destination.value.replace('_', ' '))}", Color.BRIGHT_RED)
+
     # Show items
     area_items = AREAS[state.current_position].get(AreaKey.ITEMS, {})
     if area_items:
         items = [display_name(item) for item in area_items.keys()]
         printc(f"  Items here: {', '.join(items)}", Color.BLUE)
+
     # Show interactables
     display_interactables(state, state.current_position)
 
 
 def get_area_description(state, area):
-    if area == Area.LIVING_ROOM and is_used(state, area, Object.ASHES):
-        return AREAS[area][AreaKey.ASHES_EXTINGUISHED]
-    elif area == Area.GARDEN and Item.UNTITLED_47 in state.inventory:
-        return AREAS[area][AreaKey.MAGIC_PLANT_REVEALED]
-    elif area == Area.YARD and Item.DOG_STATUE in state.inventory:
-        return AREAS[area][AreaKey.DOG_STATUE_TAKEN]
-    else:
-        description = AREAS[area][AreaKey.DESCRIPTION]
+    description = resolve_description(
+        state, AREAS[area], AreaKey.DESCRIPTION_STATES, AreaKey.DESCRIPTION
+    )
     return substitute_player_name(description, state)
 
 

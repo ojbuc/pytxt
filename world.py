@@ -1,5 +1,5 @@
 from data import AREAS
-from enums import Area, AreaKey, Color, Item, Object, ObjectKey
+from enums import Area, AreaKey, Color, Item, Path, Object, ObjectKey
 from logger import log, logc
 from utils import colorize, display_name, print_narration, printc
 
@@ -44,6 +44,14 @@ def handle_movement(state, direction):
     requirement = get_exit_requirement(state.current_position, direction)
     if not _confirm_exit(state, requirement):
         return state.current_position
+
+    success_message = requirement.get(AreaKey.CONFIRM_SUCCESS_MESSAGE)
+    if success_message:
+        print_narration(success_message, state, color=Color.BRIGHT_CYAN)
+
+    if state.current_position == Area.GARDEN and direction == Path.EAST:
+        state.shed_unlocked = True
+
     next_area = AREAS[state.current_position][AreaKey.EXITS][direction]
     logc(
         state,
@@ -129,7 +137,7 @@ def is_visible(state, area, obj_name):
     key = (area, obj_name)
     if key in state.object_visible:
         return state.object_visible[key]
-    interactable = AREAS[area][ObjectKey.INTERACTABLES].get(obj_name)
+    interactable = AREAS[area].get(ObjectKey.INTERACTABLES, {}).get(obj_name)
     if not interactable:
         return False
     if ObjectKey.BECOMES_ITEM in interactable and is_used(
@@ -144,7 +152,7 @@ def set_visible(state, area, obj_name, value):
 
 
 def reveal_interactable(state, area, interactable_name):
-    if interactable_name in AREAS[area][ObjectKey.INTERACTABLES]:
+    if interactable_name in AREAS[area].get(ObjectKey.INTERACTABLES, {}):
         set_visible(state, area, interactable_name, True)
 
 

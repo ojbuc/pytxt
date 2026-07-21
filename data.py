@@ -84,7 +84,7 @@ WRONG_ITEM_RESPONSES = {
             "▶ You offer Carl the Attic Key. He doesn't so much as glance at "
             "it, gaze fixed on the clouds like they owe him something."
         ),
-        Item.CHAIN_CUTTERS : (
+        Item.CHAIN_CUTTERS: (
             "▶ You raise the Cutters toward Carl and he tilts his head, more "
             "curious than concerned.\n▶ Whatever he's waiting on, it clearly "
             "isn't this."
@@ -168,7 +168,7 @@ WRONG_ITEM_RESPONSES = {
             "air, caught by some old, ancient magic that refuses to let the "
             "blow land."
         ),
-        Item.CHAIN_CUTTERS : (
+        Item.CHAIN_CUTTERS: (
             "▶ You test the Cutters' jaws against a stem, half-expecting the "
             "same shimmering barrier that stopped the Shovel.\n▶ Nothing "
             "happens - the Plant doesn't even seem to notice. Whatever it's "
@@ -221,7 +221,7 @@ WRONG_ITEM_RESPONSES = {
         ),
     },
     Object.X_MARK: {
-        Item.CHAIN_CUTTERS : (
+        Item.CHAIN_CUTTERS: (
             "▶ You crouch and snap the Cutters at the air above the X, as if "
             "dirt might have a seam somewhere.\n▶ It doesn't. Whatever's "
             "buried here isn't going to be reached by cutting anything."
@@ -321,6 +321,10 @@ AREAS = {
             "the Living Room feels a little colder, a little emptier than "
             "before."
         ),
+        AreaKey.DESCRIPTION_STATES: [
+            (lambda s: (Area.LIVING_ROOM, Object.ASHES) in s.object_used,
+             AreaKey.ASHES_EXTINGUISHED)
+        ],
         AreaKey.EXITS: {Path.SOUTH: Area.KITCHEN, Path.UP: Area.ATTIC},
         AreaKey.EXIT_REQUIREMENTS: {
             Path.UP: {
@@ -364,6 +368,17 @@ AREAS = {
                     "long finished.\n▶ Only the faint, wet smell of "
                     "extinguished embers lingers in the brick."
                 ),
+                ObjectKey.DESCRIPTION_STATES: [
+                    (lambda s: (Area.LIVING_ROOM, 
+                                Object.ASHES) in s.object_used,
+                     ObjectKey.ASHES_EXTINGUISHED),
+                    (lambda s: (Area.LIVING_ROOM,
+                                Object.BUTTON) in s.object_used,
+                     ObjectKey.BUTTON_PRESSED),
+                    (lambda s: (Area.LIVING_ROOM, 
+                                Object.FIREPLACE) in s.object_used,
+                     ObjectKey.USED_DESCRIPTION),
+                ],
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.INTERACTION_RESULT: (
                     "▶ The Fireplace is too hot to search through safely, but "
@@ -441,6 +456,11 @@ AREAS = {
                     "Fireplace's glow.\n▶ A faint dusting of damp ash has "
                     "settled across it."
                 ),
+                ObjectKey.DESCRIPTION_STATES: [
+                    (lambda s: (Area.LIVING_ROOM, 
+                                Object.ASHES) in s.object_used, 
+                     ObjectKey.ASHES_EXTINGUISHED),
+                ],
             },
         },
     },
@@ -452,10 +472,26 @@ AREAS = {
         ),
         AreaKey.MAGIC_PLANT_REVEALED: (
             "A sunny Garden, hedges overgrown just enough to notice. A "
-            "weathered Shed sits shut at the far end, and a coiled Hose drips"
+            "weathered Shed sits open at the far end, and a coiled Hose drips"
             " a slow rhythm beside a Plant that shimmers like it isn't quite "
             "finished growing."
         ),
+        AreaKey.MAGIC_PLANT_WATERED: (
+            "A sunny Garden, dominated now by an enormous beanstalk that "
+            "twists up out of the ornate pot and vanishes into the clouds "
+            "above. A coiled hose drips a slow rhythm beside the spigot."
+        ),
+        AreaKey.SHED_UNLOCKED: (
+            "A sunny Garden, hedges overgrown just enough to notice. A "
+            "weathered Shed sits open at the far end, and a coiled Hose drips"
+            " a slow, steady rhythm beside the spigot."
+        ),
+        AreaKey.DESCRIPTION_STATES: [
+            (lambda s: (Area.GARDEN, Object.MAGIC_PLANT) in s.object_used,
+             AreaKey.MAGIC_PLANT_WATERED),
+            (lambda s: Item.UNTITLED_47 in s.inventory,
+             AreaKey.MAGIC_PLANT_REVEALED),
+        ],
         AreaKey.EXITS: {
             Path.NORTH: Area.KITCHEN,
             Path.EAST: Area.SHED,
@@ -569,19 +605,20 @@ AREAS = {
                     "left it here didn't want it walking off. Something sharp "
                     "enough might convince the chain otherwise."
                 ),
-            ObjectKey.CAN_INTERACT: True,
-            ObjectKey.REQUIRES_ITEM: Item.CHAIN_CUTTERS,
-            ObjectKey.INTERACTION_RESULT: (
-                "▶ You tug at the chain. It doesn't budge, and neither does "
-                "the shovel.\n▶ You'd need something to cut through it."
-            ),
-            ObjectKey.SUCCESS_RESULT: (
-                "▶ The Cutters' jaws close on the rusted chain with a groan, "
-                "and it gives way in a shower of orange flakes.\n▶ The Shovel "
-                "clatters free, finally answering to someone again."
-            ),
-            ObjectKey.BECOMES_ITEM: Item.SHOVEL,
-            
+                ObjectKey.CAN_INTERACT: True,
+                ObjectKey.REQUIRES_ITEM: Item.CHAIN_CUTTERS,
+                ObjectKey.INTERACTION_RESULT: (
+                    "▶ You tug at the chain. It doesn't budge, and neither "
+                    "does the shovel.\n▶ You'd need something to cut through "
+                    "it."
+                ),
+                ObjectKey.SUCCESS_RESULT: (
+                    "▶ The Cutters' jaws close on the rusted chain with a "
+                    "groan, and it gives way in a shower of orange flakes.\n▶ "
+                    "The Shovel clatters free, finally answering to someone "
+                    "again."
+                ),
+                ObjectKey.BECOMES_ITEM: Item.SHOVEL,
             },
         },
     },
@@ -593,6 +630,10 @@ AREAS = {
         AreaKey.DOG_STATUE_TAKEN: (
             "A ground of fertile green and earthy browns."
         ),
+        AreaKey.DESCRIPTION_STATES: [
+            (lambda s: Item.DOG_STATUE in s.inventory, 
+             AreaKey.DOG_STATUE_TAKEN),
+        ],
         AreaKey.EXITS: {Path.EAST: Area.GARDEN},
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {
@@ -633,15 +674,15 @@ AREAS = {
                     "▶ Carl looks at you expectantly and then glances "
                     "meaningfully at a spot on the ground.\n▶ He paws at the "
                     "dirt and whines softly, as if trying to get your "
-                    "attention.\n▶ 'Woof!', Carl scratches at the ground in "
+                    'attention.\n▶ "Woof!", Carl scratches at the ground in '
                     "the shape of an X..."
                 ),
                 ObjectKey.SUCCESS_RESULT: (
                     "▶ You give Carl the Bone and he absolutely loses his mind"
                     " with joy!\n▶ He grabs it gently in his mouth, does three"
                     " perfect spins and then drops into a play bow with his "
-                    "tail wagging so hard his whole body wiggles.\n▶ 'WOOF "
-                    "WOOF!' he barks happily, then settles down to contentedly"
+                    'tail wagging so hard his whole body wiggles.\n▶ "WOOF '
+                    'WOOF!" he barks happily, then settles down to contentedly'
                     " chews his new treasure.\n▶ What a good boy!"
                 ),
                 ObjectKey.CONSUMES_ITEM: True,
@@ -717,6 +758,21 @@ AREAS = {
             Path.PORTAL: {
                 ObjectKey.CONDITION: Object.STATUE_PLACED,
                 AreaKey.MESSAGE: "▶ There's nothing here but thin air.",
+                AreaKey.CONFIRM_PROMPT: (
+                    "▶ The Portal churns before you, violet light tracing "
+                    "patterns that don't hold still long enough to follow.\n"
+                    "Something about it feels final - like it won't stay open "
+                    " once you've gone through."
+                ),
+                AreaKey.CONFIRM_QUESTION: "▶ Step through the Portal? (y/n): ",
+                AreaKey.CONFIRM_DECLINE_MESSAGE: (
+                    "▶ You pull back from the Portal's edge, not ready yet."
+                ),
+                AreaKey.CONFIRM_SUCCESS_MESSAGE: (
+                    "▶ You step through the swirling Portal.\n▶ Behind you, "
+                    "the violet light collapses inward with a low hum - the "
+                    "way back is gone."
+                ),
             }
         },
         AreaKey.ITEMS: {},
@@ -726,6 +782,11 @@ AREAS = {
                 ObjectKey.DESCRIPTION: (
                     "▶ A solid golden Pedestal stands here, upon further "
                     "examination, you notice a groove at the top."
+                ),
+                ObjectKey.DESCRIPTION: (
+                    "▶ The Dog Statue sits fixed in the Pedestal's groove, "
+                    "still faintly humming.\n▶ Beside it, the violet-black "
+                    "Portal churns silently in the air."
                 ),
                 ObjectKey.CAN_INTERACT: True,
                 ObjectKey.INTERACTION_RESULT: (
@@ -799,9 +860,7 @@ AREAS = {
             },
         },
         AreaKey.ITEMS: {},
-        ObjectKey.INTERACTABLES: {
-            # Object.
-        },
+        ObjectKey.INTERACTABLES: {},
     },
     Area.THE_VOID: {
         AreaKey.DESCRIPTION: (
@@ -954,6 +1013,7 @@ AREAS = {
             Path.NORTH: Area.WASTELAND,
             Path.SOUTH: Area.DEAD_ROOM,
         },
+        AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {
             Object.FEEDING_TROUGH: {
                 ObjectKey.DESCRIPTION: (
@@ -983,7 +1043,7 @@ AREAS = {
                 ObjectKey.DESCRIPTION: (
                     "▶ Half-submerged in the muck, a Pig watches you with damp"
                     ", glassy eyes, grotesquely swollen along one flank.\n▶ "
-                    "loose strips of something meat-like hang off it, wet and "
+                    "Loose strips of something meat-like hang off it, wet and "
                     "translucent, twitching faintly even though nothing here "
                     "has any business still moving.\n▶ It doesn't flinch when "
                     "you get close. It just chews, slow and endless, on "
@@ -1022,24 +1082,32 @@ AREAS = {
             },
         },
     },
-    Area.WASTELAND: {},
+    Area.WASTELAND: {
+        AreaKey.DESCRIPTION: (""),
+        AreaKey.EXITS: {},
+        AreaKey.ITEMS: {},
+        ObjectKey.INTERACTABLES: {},
+    },
     Area.BASEMENT_ALT: {
-        AreaKey.DESCRIPTION: ("TBD"),
+        AreaKey.DESCRIPTION: (""),
+        AreaKey.EXITS: {},
+        AreaKey.ITEMS: {},
+        ObjectKey.INTERACTABLES: {},
     },
     Area.CHAOS_CORE: {
-        AreaKey.DESCRIPTION: ("TBD"),
+        AreaKey.DESCRIPTION: (""),
         AreaKey.EXITS: {},
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {},
     },
     Area.FRACTURED_ECHO: {
-        AreaKey.DESCRIPTION: ("TBD"),
+        AreaKey.DESCRIPTION: (""),
         AreaKey.EXITS: {},
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {},
     },
     Area.CRIMSON_RIFT: {
-        AreaKey.DESCRIPTION: ("TBD"),
+        AreaKey.DESCRIPTION: (""),
         AreaKey.EXITS: {},
         AreaKey.ITEMS: {},
         ObjectKey.INTERACTABLES: {},

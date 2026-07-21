@@ -43,11 +43,14 @@ def _cmd_take(state, command):
 def _cmd_use(state, command):
     visible_interactables = [
         name
-        for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
+        for name in AREAS[state.current_position].get(
+            ObjectKey.INTERACTABLES, {}
+        )
         if is_visible(state, state.current_position, name)
     ]
     remainder = command[4:]  # Remove "use "
     used_item = None
+
     # Parse "use <item> on <object>"
     if " on " in remainder:
         item_part, obj_part = remainder.split(" on ", 1)
@@ -78,12 +81,15 @@ def _cmd_use(state, command):
 def _cmd_examine(state, command):
     visible_interactables = [
         name
-        for name in AREAS[state.current_position][ObjectKey.INTERACTABLES]
+        for name in AREAS[state.current_position].get(
+            ObjectKey.INTERACTABLES, {}
+        )
         if is_visible(state, state.current_position, name)
     ]
     area_items = list(
         AREAS[state.current_position].get(AreaKey.ITEMS, {}).keys()
     )
+
     # Handle other commands
     partial = (
         command[8:] if command.startswith(Command.EXAMINE) else command[3:]
@@ -211,7 +217,9 @@ def _debug_set_visibility(state, args, value):
         verb = "reveal" if value else "hide"
         debug_log(state, f"▶ [DEBUG] Usage: debug {verb} <object>")
         return state.current_position
-    interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
+    interactables = AREAS[state.current_position].get(
+        ObjectKey.INTERACTABLES, {}
+    )
     obj_name, hint = resolve_name(args, list(interactables.keys()))
     if hint:
         log(state, hint)
@@ -238,7 +246,9 @@ def _debug_set_used(state, args, used):
         verb = "use" if used else "unuse"
         debug_log(state, f"▶ [DEBUG] Usage: debug {verb} <object>")
         return state.current_position
-    interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
+    interactables = AREAS[state.current_position].get(
+        ObjectKey.INTERACTABLES, {}
+    )
     obj_name, hint = resolve_name(args, list(interactables.keys()))
     if hint:
         log(state, hint)
@@ -292,7 +302,9 @@ def _debug_list(state, args):
         names = ", ".join(display_name(a) for a in Area)
         debug_log(state, f"▶ [DEBUG] Areas: {names}")
     elif target in ("object", "objects", "interactable", "interactables"):
-        interactables = AREAS[state.current_position][ObjectKey.INTERACTABLES]
+        interactables = AREAS[state.current_position].get(
+            ObjectKey.INTERACTABLES, {}
+        )
         names = ", ".join(display_name(n) for n in interactables) or "(none)"
         debug_log(state, f"▶ [DEBUG] Objects here: {names}")
     else:
@@ -388,7 +400,7 @@ def process_command(state, command):
         show_history(state)
     elif command == Command.HELP:
         show_help(state)
-    elif command in (Command.ABANDON):
+    elif command == Command.ABANDON:
         if handle_quit_command(state):
             return Status.QUIT
         else:
@@ -407,9 +419,11 @@ def parse_movement_command(state, command):
     parts = command.split()
     if not parts:
         return None
-    exits = AREAS[state.current_position][AreaKey.EXITS]
+    exits = AREAS[state.current_position].get(AreaKey.EXITS, {})
+
     # Resolve alias first
     first = DIRECTION_ALIASES.get(parts[0], parts[0])
+
     # "n", "north", "go north"
     if len(parts) == 1 and first in exits:
         return first
@@ -417,6 +431,7 @@ def parse_movement_command(state, command):
         second = DIRECTION_ALIASES.get(parts[1], parts[1])
         if second in exits:
             return second
+
     # "living area" or "go living area" - match by destination name
     # Strip leading "go " if present
     dest_input = command[3:] if command.startswith("go ") else command
@@ -431,8 +446,11 @@ def handle_inventory_command(state):
         items = ", ".join(display_name(i) for i in state.inventory)
         logc(state, f"▶ You have: {items}", Color.GREEN)
         if not state.shown_inventory_help:
-            logc(state, "▶ (You can examine items in your inventory)", 
-                        Color.GREEN)
+            logc(
+                state,
+                "▶ (You can examine items in your inventory)",
+                Color.GREEN,
+            )
             state.shown_inventory_help = True
     else:
         logc(state, "▶ Your inventory is empty.", Color.GREEN)
